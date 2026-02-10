@@ -7,6 +7,8 @@ import com.rental.houserental.dto.TenantLoginRequest;
 import com.rental.houserental.entity.Admin;
 import com.rental.houserental.entity.Owner;
 import com.rental.houserental.entity.Tenant;
+import com.rental.houserental.enums.OwnerStatus;
+import com.rental.houserental.exception.OwnerNotApprovedException;
 import com.rental.houserental.repository.AdminRepository;
 import com.rental.houserental.repository.OwnerRepository;
 import com.rental.houserental.security.JwtUtil;
@@ -50,6 +52,16 @@ public class AuthService {
         if (!passwordEncoder.matches(request.getPassword(), owner.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
+        // Approval Check (IMPORTANT)
+        if (owner.getStatus() == OwnerStatus.PENDING) {
+            throw new OwnerNotApprovedException("Owner approval pending.");
+        }
+
+        if (owner.getStatus() == OwnerStatus.REJECTED) {
+            throw new OwnerNotApprovedException("Owner account rejected by admin.");
+        }
+
+
 
         String token = jwtUtil.generateToken(owner.getEmail(), owner.getRole());
 
