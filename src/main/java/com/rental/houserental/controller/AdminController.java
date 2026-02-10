@@ -22,6 +22,7 @@ public class AdminController {
     public ResponseEntity<String> dashboard() {
         return ResponseEntity.ok("Welcome Admin, Dashboard Access Granted ✅");
     }
+
     @GetMapping("/tenants")
     public ResponseEntity<List<TenantAdminViewDto>> getAllTenants() {
 
