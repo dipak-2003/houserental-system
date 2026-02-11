@@ -28,7 +28,6 @@ public class AdminController {
 
         return ResponseEntity.ok(tenantService.getAllTenants());
     }
-
     // View all owners
     @GetMapping("/owners")
     public ResponseEntity<List<OwnerAdminViewDto>> getAllOwners() {
