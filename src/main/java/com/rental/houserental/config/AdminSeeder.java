@@ -36,6 +36,6 @@ public class AdminSeeder {
 
         adminRepository.save(admin);
 
-        System.out.println("✅ Default Admin Created: " + adminEmail);
+        System.out.println("Default Admin Created: " + adminEmail);
     }
 }

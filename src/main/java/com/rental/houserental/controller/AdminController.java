@@ -24,7 +24,7 @@ public class AdminController {
 
     @GetMapping("/dashboard")
     public ResponseEntity<String> dashboard() {
-        return ResponseEntity.ok("Welcome Admin, Dashboard Access Granted ✅");
+        return ResponseEntity.ok("Welcome Admin, Dashboard Access Granted ");
 
 
     }
