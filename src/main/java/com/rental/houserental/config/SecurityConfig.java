@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .formLogin(form -> form.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/api/properties/public/**").permitAll()
                                 .requestMatchers("/api/owner/**").hasRole("OWNER")
                                 // Admin routes (ADMIN role required)
                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")

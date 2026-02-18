@@ -16,7 +16,7 @@ import java.util.List;
 public class OwnerService {
     private final OwnerRepository ownerRepository;
     private final PasswordEncoder passwordEncoder;
-
+    private final EmailService emailService;
     public void registerOwner(OwnerRegisterRequest request) {
 
         if (ownerRepository.findByEmail(request.getEmail()).isPresent()) {
@@ -53,6 +53,9 @@ public class OwnerService {
 
         owner.setStatus(OwnerStatus.APPROVED);
         ownerRepository.save(owner);
+
+        //send approve owner
+        emailService.sendOwnerApprovalEmail(owner.getEmail());
     }
 //for rejecting the owner
     public void rejectOwner(Long ownerId) {
@@ -61,6 +64,8 @@ public class OwnerService {
 
         owner.setStatus(OwnerStatus.REJECTED);
         ownerRepository.save(owner);
+
+
     }
 
     //logic to view all the pending owners

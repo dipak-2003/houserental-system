@@ -1,8 +1,11 @@
 package com.rental.houserental.controller;
 
 import com.rental.houserental.dto.OwnerAdminViewDto;
+import com.rental.houserental.dto.PendingPropertyAdminDto;
 import com.rental.houserental.dto.TenantAdminViewDto;
 import com.rental.houserental.entity.Owner;
+import com.rental.houserental.entity.Property;
+import com.rental.houserental.service.AdminPropertyService;
 import com.rental.houserental.service.OwnerService;
 import com.rental.houserental.service.TenantService;
 import lombok.RequiredArgsConstructor;
@@ -17,10 +20,13 @@ import java.util.List;
 public class AdminController {
     private final TenantService tenantService;
     private final OwnerService ownerService;
+    private final AdminPropertyService adminPropertyService;
 
     @GetMapping("/dashboard")
     public ResponseEntity<String> dashboard() {
         return ResponseEntity.ok("Welcome Admin, Dashboard Access Granted ✅");
+
+
     }
 
     @GetMapping("/tenants")
@@ -52,6 +58,27 @@ public class AdminController {
     public ResponseEntity<List<OwnerAdminViewDto>> viewPendingOwners() {
 
         return ResponseEntity.ok(ownerService.getPendingOwners());
+    }
+
+
+    //  View all pending property requests
+    @GetMapping("/properties/pending")
+    public ResponseEntity<List<PendingPropertyAdminDto>> getPendingProperties() {
+        return ResponseEntity.ok(adminPropertyService.getPendingProperties());
+    }
+
+    //  Approve property listing
+    @PutMapping("/properties/{id}/approve")
+    public ResponseEntity<String> approveProperty(@PathVariable Long id) {
+        adminPropertyService.approveProperty(id);
+        return ResponseEntity.ok("Property approved successfully");
+    }
+
+    //  Reject property listing
+    @PutMapping("/properties/{id}/reject")
+    public ResponseEntity<String> rejectProperty(@PathVariable Long id) {
+        adminPropertyService.rejectProperty(id);
+        return ResponseEntity.ok("Property rejected successfully");
     }
 
 
