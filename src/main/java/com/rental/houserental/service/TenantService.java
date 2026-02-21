@@ -3,6 +3,7 @@ package com.rental.houserental.service;
 import com.rental.houserental.dto.TenantAdminViewDto;
 import com.rental.houserental.dto.TenantRegisterRequest;
 import com.rental.houserental.entity.Tenant;
+import com.rental.houserental.enums.Role;
 import com.rental.houserental.repository.TenantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,7 +28,7 @@ public class TenantService {
         tenant.setFullName(request.getFullName());
         tenant.setEmail(request.getEmail());
         tenant.setPassword(passwordEncoder.encode(request.getPassword()));
-        tenant.setRole("ROLE_TENANT");
+        tenant.setRole(Role.TENANT);
 
         tenantRepository.save(tenant);
     }
@@ -38,7 +39,7 @@ public class TenantService {
                 .orElseThrow(() -> new RuntimeException("Tenant not found"));
     }
 
-    // ✅ Admin Feature: View All Tenants
+    //Admin Feature: View All Tenants
     public List<TenantAdminViewDto> getAllTenants() {
 
         return tenantRepository.findAll()
@@ -47,7 +48,7 @@ public class TenantService {
                         tenant.getId(),
                         tenant.getFullName(),
                         tenant.getEmail(),
-                        tenant.getRole()
+                        tenant.getRole().name()
                 ))
                 .toList();
     }

@@ -4,6 +4,7 @@ import com.rental.houserental.dto.OwnerAdminViewDto;
 import com.rental.houserental.dto.OwnerRegisterRequest;
 import com.rental.houserental.entity.Owner;
 import com.rental.houserental.enums.OwnerStatus;
+import com.rental.houserental.enums.Role;
 import com.rental.houserental.repository.OwnerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,7 +30,7 @@ public class OwnerService {
         owner.setPassword(passwordEncoder.encode(request.getPassword()));
         owner.setPhone(request.getPhone());
         owner.setStatus(OwnerStatus.PENDING);
-        owner.setRole("ROLE_OWNER");
+        owner.setRole(Role.OWNER.OWNER);
 
         ownerRepository.save(owner);
     }

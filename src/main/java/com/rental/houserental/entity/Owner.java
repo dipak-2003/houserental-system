@@ -1,6 +1,7 @@
 package com.rental.houserental.entity;
 
 import com.rental.houserental.enums.OwnerStatus;
+import com.rental.houserental.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,7 +29,8 @@ public class Owner {
     private String phone;
 
 
-    private String role = "ROLE_OWNER";
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @Enumerated(EnumType.STRING)
     private OwnerStatus status;

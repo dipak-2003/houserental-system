@@ -1,5 +1,6 @@
 package com.rental.houserental.entity;
 
+import com.rental.houserental.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,6 +28,6 @@ public class Tenant {
     private String password;
 
 
-    @Column(nullable = false)
-    private String role; // ROLE_TENANT, ROLE_OWNER, ROLE_ADMIN
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }

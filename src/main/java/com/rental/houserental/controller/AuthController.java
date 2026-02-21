@@ -1,78 +1,173 @@
 package com.rental.houserental.controller;
 
-import com.rental.houserental.dto.*;
+import com.rental.houserental.config.JwtUtil;
+import com.rental.houserental.dto.LoginRequest;
+import com.rental.houserental.dto.AuthResponse;
+import com.rental.houserental.dto.RegisterRequest;
+import com.rental.houserental.entity.Admin;
+import com.rental.houserental.entity.Owner;
 import com.rental.houserental.entity.Tenant;
-import com.rental.houserental.service.AuthService;
-import com.rental.houserental.service.OwnerService;
-import com.rental.houserental.service.TenantService;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import com.rental.houserental.enums.Role;
+import com.rental.houserental.repository.AdminRepository;
+import com.rental.houserental.repository.OwnerRepository;
+import com.rental.houserental.repository.TenantRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
-@RequiredArgsConstructor
-@CrossOrigin("*")
 public class AuthController {
-    private final TenantService tenantService;
-    private final OwnerService ownerService;
 
-    private final AuthService authService;
+    @Autowired
+    private TenantRepository tenantRepository;
 
+    @Autowired
+    private AdminRepository adminRepository;
 
-    @PostMapping("/tenant/register")
-    public ResponseEntity<String> registerTenant(
-            @Valid @RequestBody TenantRegisterRequest request) {
+    @Autowired
+    private OwnerRepository ownerRepository;
 
-        tenantService.registerTenant(request);
-        return ResponseEntity.ok("Tenant registered successfully");
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Value("${app.admin.email}")
+    private String adminEmail;
+
+    @Value("${app.admin.name}")
+    private String adminName;
+
+    @Value("${app.admin.password}")
+    private String adminPassword;
+
+    // ================= REGISTER =================
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+
+        //Check duplicate email in all tables
+        if (tenantRepository.findByEmail(request.getEmail()).isPresent() ||
+                adminRepository.findByEmail(request.getEmail()).isPresent() ||
+                ownerRepository.findByEmail(request.getEmail()).isPresent()) {
+
+            return ResponseEntity.badRequest()
+                    .body("Email already exists!");
+        }
+
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+
+        // ================= ADMIN AUTO CREATE =================
+        if (adminRepository.findByEmail(adminEmail).isEmpty()) {
+
+            Admin admin = new Admin();
+            admin.setFullName(adminName);
+            admin.setEmail(adminEmail);
+            admin.setPassword(passwordEncoder.encode(adminPassword));
+            admin.setRole(Role.ADMIN);
+
+            adminRepository.save(admin);
+        }
+
+        // ================= OWNER REGISTER =================
+        if (request.getRole() == Role.OWNER) {
+
+            Owner owner = new Owner();
+            owner.setFullName(request.getFullName());
+            owner.setEmail(request.getEmail());
+            owner.setPassword(encodedPassword);
+            owner.setRole(Role.OWNER);
+
+            ownerRepository.save(owner);
+
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body("Owner Registered Successfully");
+        }
+
+        // ================= TENANT REGISTER =================
+        Tenant tenant = new Tenant();
+        tenant.setFullName(request.getFullName());
+        tenant.setEmail(request.getEmail());
+        tenant.setPassword(encodedPassword);
+        tenant.setRole(Role.TENANT);
+
+        tenantRepository.save(tenant);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body("Tenant Registered Successfully");
     }
-    @PostMapping("/tenant/login")
-    public ResponseEntity<AuthResponse> loginTenant(
-            @Valid @RequestBody TenantLoginRequest request) {
 
-        return ResponseEntity.ok(authService.loginTenant(request));
-    }
-    @GetMapping("/profile")
-    public ResponseEntity<TenantProfileDTO> profile(Authentication authentication) {
+    // ================= LOGIN =================
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
 
-        String email = authentication.getName(); // from JWT
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(),
+                            request.getPassword()
+                    )
+            );
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Invalid Email or Password");
+        }
 
-        Tenant tenant = tenantService.getTenantByEmail(email);
+        Long id=null;
+        String email = request.getEmail();
+        String fullName = null;
+        String role = null;
 
-        TenantProfileDTO dto = new TenantProfileDTO(
-                tenant.getFullName(),
-                tenant.getEmail(),
-                tenant.getRole()
+
+        // Check Tenant
+        Optional<Tenant> tenantOptional = tenantRepository.findByEmail(email);
+        if (tenantOptional.isPresent()) {
+            Tenant tenant = tenantOptional.get();
+            id=tenant.getId();
+            fullName = tenant.getFullName();
+            role = tenant.getRole().name();
+        }
+
+        // Check Admin
+        Optional<Admin> adminOptional = adminRepository.findByEmail(email);
+        if (adminOptional.isPresent()) {
+            Admin admin = adminOptional.get();
+            id=admin.getId();
+            fullName = admin.getFullName();
+            role = admin.getRole().name();
+        }
+
+        // Check Owner
+        Optional<Owner> ownerOptional = ownerRepository.findByEmail(email);
+        if (ownerOptional.isPresent()) {
+            Owner owner = ownerOptional.get();
+            id=owner.getId();
+            fullName = owner.getFullName();
+            role = owner.getRole().name();
+
+        }
+
+        // Generate JWT
+        String token = jwtUtil.generateToken(email);
+
+        AuthResponse response = new AuthResponse(
+                id,
+                fullName,
+                role,
+                token,
+                "Login Successful"
         );
 
-
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(response);
     }
-    @PostMapping("/owner/register")
-    public ResponseEntity<String> registerOwner(
-            @Valid @RequestBody OwnerRegisterRequest request) {
-
-        ownerService.registerOwner(request);
-        return ResponseEntity.ok("Owner registered successfully");
-    }
-
-    @PostMapping("/owner/login")
-    public ResponseEntity<AuthResponse> loginOwner(
-            @Valid @RequestBody OwnerLoginRequest request) {
-
-        return ResponseEntity.ok(authService.loginOwner(request));
-    }
-    @PostMapping("/admin/login")
-    public ResponseEntity<AuthResponse> loginAdmin(
-            @Valid @RequestBody AdminLoginRequest request) {
-
-        return ResponseEntity.ok(authService.loginAdmin(request));
-    }
-
-
-
-
 }
