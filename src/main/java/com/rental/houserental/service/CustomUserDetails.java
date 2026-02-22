@@ -9,148 +9,99 @@ import com.rental.houserental.repository.AdminRepository;
 import com.rental.houserental.repository.OwnerRepository;
 import com.rental.houserental.repository.TenantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class CustomUserDetails implements UserDetailsService {
 
     @Autowired
-    private TenantRepository tenantRepository;
-
+    private JwtUtil jwtUtil;
     @Autowired
     private AdminRepository adminRepository;
-
     @Autowired
     private OwnerRepository ownerRepository;
-
     @Autowired
-    private JwtUtil jwtUtil;
+    private TenantRepository tenantRepository;
 
-    // =========================
-    // LOGIN METHOD (Spring Security)
-    // =========================
+    // Load by email
+    public UserDetails loadUserByEmail(String email) {
+        Optional<Admin> adminOpt = adminRepository.findByEmail(email);
+        if (adminOpt.isPresent()) return createUserDetails(adminOpt.get().getEmail(), adminOpt.get().getPassword(), adminOpt.get().getRole().name());
+
+        Optional<Owner> ownerOpt = ownerRepository.findByEmail(email);
+        if (ownerOpt.isPresent()) return createUserDetails(ownerOpt.get().getEmail(), ownerOpt.get().getPassword(), ownerOpt.get().getRole().name());
+
+        Optional<Tenant> tenantOpt = tenantRepository.findByEmail(email);
+        if (tenantOpt.isPresent()) return createUserDetails(tenantOpt.get().getEmail(), tenantOpt.get().getPassword(), tenantOpt.get().getRole().name());
+
+        throw new UsernameNotFoundException("User not found: " + email);
+    }
+
+    private UserDetails createUserDetails(String email, String password, String role) {
+        return User.builder()
+                .username(email)
+                .password(password)
+                .authorities(List.of(new SimpleGrantedAuthority("ROLE_" + role)))
+                .build();
+    }
+
     @Override
-    public UserDetails loadUserByUsername(String email)
-            throws UsernameNotFoundException {
-
-        // Check Tenant
-        Optional<Tenant> tenantOptional = tenantRepository.findByEmail(email);
-        if (tenantOptional.isPresent()) {
-            Tenant tenant = tenantOptional.get();
-            return buildUserDetails(
-                    tenant.getEmail(),
-                    tenant.getPassword(),
-                    tenant.getRole().name()
-            );
-        }
-
-        // Check Admin
-        Optional<Admin> adminOptional = adminRepository.findByEmail(email);
-        if (adminOptional.isPresent()) {
-            Admin admin = adminOptional.get();
-            return buildUserDetails(
-                    admin.getEmail(),
-                    admin.getPassword(),
-                    admin.getRole().name()
-            );
-        }
-
-        // Check Owner
-        Optional<Owner> ownerOptional = ownerRepository.findByEmail(email);
-        if (ownerOptional.isPresent()) {
-            Owner owner = ownerOptional.get();
-            return buildUserDetails(
-                    owner.getEmail(),
-                    owner.getPassword(),
-                    owner.getRole().name()
-            );
-        }
-
-        throw new UsernameNotFoundException("User not found with email: " + email);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return loadUserByEmail(username);
     }
 
-    // =========================
-    // Load User from JWT Token
-    // =========================
-    public UserDetails loadUserByJwtToken(String token) {
-
+    public LoggedUser loadUserByToken(String token) throws Exception {
         if (token == null || !token.startsWith("Bearer ")) {
-            throw new RuntimeException("Invalid Authorization header");
-        }
-
-        String jwt = token.substring(7);
-        String email = jwtUtil.extractEmail(jwt);
-
-        return loadUserByUsername(email);
-    }
-
-    // =========================
-    // Get Logged User Info from Token
-    // =========================
-    public LoggedUser loadUserByToken(String token) {
-
-        if (token == null || token.isBlank()) {
-            throw new RuntimeException("Authorization header is missing");
-        }
-
-        if (!token.startsWith("Bearer ")) {
-            throw new RuntimeException("Invalid Authorization header format");
+            return null;
         }
 
         String jwt = token.substring(7).trim();
+
+        // Validate token
+        if (!jwtUtil.validateToken(jwt)) {
+            throw new Exception("Token is invalid or expired");
+        }
+
         String email = jwtUtil.extractEmail(jwt);
 
-        // Check Tenant
-        Optional<Tenant> tenantOptional = tenantRepository.findByEmail(email);
-        if (tenantOptional.isPresent()) {
-            Tenant tenant = tenantOptional.get();
-            return new LoggedUser(
-                    tenant.getId(),
-                    tenant.getFullName(),
-                    tenant.getRole()
-            );
+        Optional<Admin> adminOpt = adminRepository.findByEmail(email);
+        if (adminOpt.isPresent()) {
+            Admin admin = adminOpt.get();
+            LoggedUser user = new LoggedUser();
+            user.setId(admin.getId());
+            user.setFullName(admin.getFullName());
+            user.setRole(admin.getRole());
+            return user;
         }
 
-        // Check Admin
-        Optional<Admin> adminOptional = adminRepository.findByEmail(email);
-        if (adminOptional.isPresent()) {
-            Admin admin = adminOptional.get();
-            return new LoggedUser(
-                    admin.getId(),
-                    admin.getFullName(),
-                    admin.getRole()
-            );
+        Optional<Owner> ownerOpt = ownerRepository.findByEmail(email);
+        if (ownerOpt.isPresent()) {
+            Owner owner = ownerOpt.get();
+            LoggedUser user = new LoggedUser();
+            user.setId(owner.getId());
+            user.setFullName(owner.getFullName());
+            user.setRole(owner.getRole());
+            return user;
         }
 
-        // Check Owner
-        Optional<Owner> ownerOptional = ownerRepository.findByEmail(email);
-        if (ownerOptional.isPresent()) {
-            Owner owner = ownerOptional.get();
-            return new LoggedUser(
-                    owner.getId(),
-                    owner.getFullName(),
-                    owner.getRole()
-            );
+        Optional<Tenant> tenantOpt = tenantRepository.findByEmail(email);
+        if (tenantOpt.isPresent()) {
+            Tenant tenant = tenantOpt.get();
+            LoggedUser user = new LoggedUser();
+            user.setId(tenant.getId());
+            user.setFullName(tenant.getFullName());
+            user.setRole(tenant.getRole());
+            return user;
         }
 
-        throw new UsernameNotFoundException("User not found for token");
-    }
-
-    // =========================
-    // Common Method to Build Spring Security User
-    // =========================
-    private UserDetails buildUserDetails(String email,
-                                         String password,
-                                         String role) {
-
-        return new org.springframework.security.core.userdetails.User(
-                email,
-                password,
-                Collections.singleton(() -> "ROLE_" + role)
-        );
+        // If email not found in any table
+        throw new Exception("User not found for token");
     }
 }

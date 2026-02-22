@@ -12,30 +12,24 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private Key getSignKey(){
+    private Key getSignKey() {
         String SECRET = "mySuperSecretKeyForJwtAuthentication2026SecureKey";
         return Keys.hmacShaKeyFor(SECRET.getBytes());
     }
 
-    public String generateToken(String email){
-        long EXPIRATION = 1000 * 60 * 60;
+    // Generate token with email + role
+    public String generateToken(String email, String role) {
+        long EXPIRATION = 1000 * 60 * 60; // 1 hour
         return Jwts.builder()
                 .setSubject(email)
+                .claim("role", role)  // add role in JWT
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis()+ EXPIRATION))
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public String extractEmail(String token){
-        return getClaims(token).getSubject();
-    }
-
-    public boolean validateToken(String token){
-        return getClaims(token).getExpiration().after(new Date());
-    }
-
-    private Claims getClaims(String token){
+    public Claims getClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSignKey())
                 .build()
@@ -43,6 +37,15 @@ public class JwtUtil {
                 .getBody();
     }
 
+    public String extractEmail(String token) {
+        return getClaims(token).getSubject();
+    }
 
+    public String extractRole(String token) {
+        return getClaims(token).get("role", String.class);
+    }
 
+    public boolean validateToken(String token) {
+        return getClaims(token).getExpiration().after(new Date());
+    }
 }

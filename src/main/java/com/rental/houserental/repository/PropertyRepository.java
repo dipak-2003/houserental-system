@@ -14,6 +14,7 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
     List<Property> findByStatus(PropertyStatus status);
 
     Optional<Property> findByIdAndStatus(Long id, PropertyStatus status);
+    Long countByStatus(PropertyStatus status);
 
 
 }

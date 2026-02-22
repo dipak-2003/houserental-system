@@ -40,4 +40,8 @@ public class Property {
     @JoinColumn(name = "owner_id")
     private Owner owner;
 
+    @ManyToOne
+    @JoinColumn(name = "admin_id")
+    private Admin admin;
+
 }

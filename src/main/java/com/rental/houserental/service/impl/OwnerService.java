@@ -1,4 +1,4 @@
-package com.rental.houserental.service;
+package com.rental.houserental.service.impl;
 
 import com.rental.houserental.dto.OwnerAdminViewDto;
 import com.rental.houserental.dto.OwnerRegisterRequest;

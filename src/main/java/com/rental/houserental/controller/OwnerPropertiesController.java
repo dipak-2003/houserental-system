@@ -2,7 +2,7 @@ package com.rental.houserental.controller;
 
 import com.rental.houserental.dto.PropertyRequestDto;
 import com.rental.houserental.entity.Property;
-import com.rental.houserental.service.PropertyService;
+import com.rental.houserental.service.impl.PropertyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

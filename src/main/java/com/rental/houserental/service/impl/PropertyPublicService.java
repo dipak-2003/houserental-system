@@ -1,4 +1,4 @@
-package com.rental.houserental.service;
+package com.rental.houserental.service.impl;
 
 import com.rental.houserental.dto.PropertyPublicDto;
 import com.rental.houserental.entity.Property;

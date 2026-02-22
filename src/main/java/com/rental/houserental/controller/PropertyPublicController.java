@@ -1,10 +1,8 @@
 package com.rental.houserental.controller;
-
 import com.rental.houserental.dto.PropertyPublicDto;
-import com.rental.houserental.service.PropertyPublicService;
+import com.rental.houserental.service.impl.PropertyPublicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

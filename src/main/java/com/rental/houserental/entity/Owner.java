@@ -35,5 +35,13 @@ public class Owner {
     @Enumerated(EnumType.STRING)
     private OwnerStatus status;
 
+    @ManyToOne
+    @JoinColumn(name = "admin_id")
+    private Admin admin;
+
+    @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL)
+    private Profile profile;
+
+
 
 }

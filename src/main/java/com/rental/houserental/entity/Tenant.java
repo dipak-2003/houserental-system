@@ -30,4 +30,11 @@ public class Tenant {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @ManyToOne
+    @JoinColumn(name = "admin_id")
+    private Admin admin;
+
+    @OneToOne(mappedBy = "tenant", cascade = CascadeType.ALL)
+    private Profile profile;
 }

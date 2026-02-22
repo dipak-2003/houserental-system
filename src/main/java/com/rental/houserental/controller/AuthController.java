@@ -1,8 +1,8 @@
 package com.rental.houserental.controller;
 
 import com.rental.houserental.config.JwtUtil;
-import com.rental.houserental.dto.LoginRequest;
 import com.rental.houserental.dto.AuthResponse;
+import com.rental.houserental.dto.LoginRequest;
 import com.rental.houserental.dto.RegisterRequest;
 import com.rental.houserental.entity.Admin;
 import com.rental.houserental.entity.Owner;
@@ -56,20 +56,18 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
 
-        //Check duplicate email in all tables
+        // Check duplicate email
         if (tenantRepository.findByEmail(request.getEmail()).isPresent() ||
                 adminRepository.findByEmail(request.getEmail()).isPresent() ||
                 ownerRepository.findByEmail(request.getEmail()).isPresent()) {
 
-            return ResponseEntity.badRequest()
-                    .body("Email already exists!");
+            return ResponseEntity.badRequest().body("Email already exists!");
         }
 
         String encodedPassword = passwordEncoder.encode(request.getPassword());
 
         // ================= ADMIN AUTO CREATE =================
         if (adminRepository.findByEmail(adminEmail).isEmpty()) {
-
             Admin admin = new Admin();
             admin.setFullName(adminName);
             admin.setEmail(adminEmail);
@@ -81,7 +79,6 @@ public class AuthController {
 
         // ================= OWNER REGISTER =================
         if (request.getRole() == Role.OWNER) {
-
             Owner owner = new Owner();
             owner.setFullName(request.getFullName());
             owner.setEmail(request.getEmail());
@@ -123,26 +120,16 @@ public class AuthController {
                     .body("Invalid Email or Password");
         }
 
-        Long id=null;
-        String email = request.getEmail();
+        Long id = null;
         String fullName = null;
         String role = null;
-
-
-        // Check Tenant
-        Optional<Tenant> tenantOptional = tenantRepository.findByEmail(email);
-        if (tenantOptional.isPresent()) {
-            Tenant tenant = tenantOptional.get();
-            id=tenant.getId();
-            fullName = tenant.getFullName();
-            role = tenant.getRole().name();
-        }
+        String email = request.getEmail();
 
         // Check Admin
         Optional<Admin> adminOptional = adminRepository.findByEmail(email);
         if (adminOptional.isPresent()) {
             Admin admin = adminOptional.get();
-            id=admin.getId();
+            id = admin.getId();
             fullName = admin.getFullName();
             role = admin.getRole().name();
         }
@@ -151,14 +138,22 @@ public class AuthController {
         Optional<Owner> ownerOptional = ownerRepository.findByEmail(email);
         if (ownerOptional.isPresent()) {
             Owner owner = ownerOptional.get();
-            id=owner.getId();
+            id = owner.getId();
             fullName = owner.getFullName();
             role = owner.getRole().name();
-
         }
 
-        // Generate JWT
-        String token = jwtUtil.generateToken(email);
+        // Check Tenant
+        Optional<Tenant> tenantOptional = tenantRepository.findByEmail(email);
+        if (tenantOptional.isPresent()) {
+            Tenant tenant = tenantOptional.get();
+            id = tenant.getId();
+            fullName = tenant.getFullName();
+            role = tenant.getRole().name();
+        }
+
+        // Generate JWT with role
+        String token = jwtUtil.generateToken(email, role);
 
         AuthResponse response = new AuthResponse(
                 id,

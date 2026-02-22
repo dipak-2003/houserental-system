@@ -1,4 +1,4 @@
-package com.rental.houserental.service;
+package com.rental.houserental.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
