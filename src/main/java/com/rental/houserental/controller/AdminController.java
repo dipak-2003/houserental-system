@@ -30,6 +30,7 @@ public class AdminController {
             @RequestHeader("Authorization") String authHeader) throws Exception {
 
         LoggedUser user = userDetailsService.loadUserByToken(authHeader);
+        System.out.println(user);
 
         if (user !=null) {
             return ResponseEntity.ok(adminService.getDashboardDetails());

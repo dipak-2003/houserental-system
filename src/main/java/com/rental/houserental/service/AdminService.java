@@ -18,5 +18,4 @@ public interface AdminService {
     public Profile updateAdminProfile(ProfileDto profileDto,Long adminId) throws Exception;
     public String deleteProperty(Long propertyId) throws Exception;
 
-
 }
