@@ -2,6 +2,7 @@ package com.rental.houserental.repository;
 
 import com.rental.houserental.entity.Owner;
 import com.rental.houserental.entity.Property;
+import com.rental.houserental.enums.BookingStatus;
 import com.rental.houserental.enums.PropertyStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,24 +20,30 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
     Optional<Property> findByIdAndStatus(Long id, PropertyStatus status);
     Long countByStatus(PropertyStatus status);
     List<Property> findByOwner(Owner owner);
+    List<Property> findByBookingStatus(BookingStatus bookingStatus);
 
-    List<Property> findByAvailableTrue();
-
-    // Search with optional filters
+    // Search with optional filters: tole, municipality, type, price, bedrooms
     @Query("SELECT p FROM Property p WHERE " +
-            "(:location IS NULL OR LOWER(p.location) LIKE LOWER(CONCAT('%', :location, '%'))) AND " +
+            "(:tole IS NULL OR LOWER(p.tole) LIKE LOWER(CONCAT('%', :tole, '%'))) AND " +
+            "(:municipality IS NULL OR LOWER(p.municipality) LIKE LOWER(CONCAT('%', :municipality, '%'))) AND " +
             "(:type IS NULL OR p.type = :type) AND " +
             "(:minPrice IS NULL OR p.price >= :minPrice) AND " +
             "(:maxPrice IS NULL OR p.price <= :maxPrice) AND " +
             "(:bedrooms IS NULL OR p.bedrooms = :bedrooms) AND " +
-            "p.available = true")
+            "(:status IS NULL OR p.bookingStatus = :status)")
     List<Property> searchProperty(
-            @Param("location") String location,
+            @Param("tole") String tole,
+            @Param("municipality") String municipality,
             @Param("type") String type,
             @Param("minPrice") Double minPrice,
             @Param("maxPrice") Double maxPrice,
-            @Param("bedrooms") Integer bedrooms
+            @Param("bedrooms") Integer bedrooms,
+            @Param("status") BookingStatus status
     );
 
+    @Query("SELECT p FROM Property p JOIN FETCH p.owner WHERE p.status = :status")
+    List<Property> findAllWithOwner(@Param("status") PropertyStatus status);
+    @Query("SELECT p FROM Property p JOIN FETCH p.owner WHERE p.id = :id AND p.status = :status")
+    Optional<Property> findByIdWithOwner(@Param("id") Long id,@Param("status") PropertyStatus status);
 
 }

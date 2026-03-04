@@ -1,6 +1,7 @@
 package com.rental.houserental.entity;
 
 import com.rental.houserental.enums.Role;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,6 +24,7 @@ public class Admin {
 
     @Column
     private String fullName;
+
     @Column(unique = true, nullable = false)
     private String email;
 
@@ -32,22 +34,24 @@ public class Admin {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    // Relationships
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Owner> owners;
 
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Tenant> tenants;
 
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Property> properties;
 
-
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Payment> payments;
 
     @OneToOne(mappedBy = "admin", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private Profile profile;
-
-
-
 }

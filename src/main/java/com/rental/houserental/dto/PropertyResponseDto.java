@@ -1,0 +1,34 @@
+package com.rental.houserental.dto;
+
+import com.rental.houserental.enums.BookingStatus;
+import lombok.Data;
+
+@Data
+public class PropertyResponseDto {
+
+    private Long id;
+    private String title;
+    private Double price;
+    private String type;
+    private String description;
+
+    private String district;
+    private String municipality;
+    private Integer wardNo;
+    private String tole;
+    private String houseName;
+    private String houseNo;
+    private String apartmentNo;
+
+    private Integer bedrooms;
+    private Integer bathrooms;
+    private Double area;
+
+    private Boolean furnished;
+    private Boolean parkingAvailable;
+    private String imageUrl;
+    private BookingStatus bookingStatus;
+    // Owner (only id & fullName)
+    private Long ownerId;
+    private String ownerName;
+}

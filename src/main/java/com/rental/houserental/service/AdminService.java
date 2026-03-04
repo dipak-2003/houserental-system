@@ -1,12 +1,10 @@
 package com.rental.houserental.service;
 import com.rental.houserental.dto.DashboardDto;
-import com.rental.houserental.dto.ProfileDto;
 import com.rental.houserental.entity.*;
-
 import java.util.List;
 
-public interface AdminService {
 
+public interface AdminService {
     public DashboardDto getDashboardDetails() throws Exception;
     public List<Owner> getAllOwners() throws Exception;
     public List<Tenant> getAllTenants() throws Exception;
@@ -14,8 +12,6 @@ public interface AdminService {
     public List<Property> getAllProperty() throws Exception;
     public void deleteOwnerByOwnerId(Long ownerId) throws Exception;
     public void deleteTenantByTenantId(Long tenantId) throws Exception;
-    public Profile getProfileByAdminId(Long adminId) throws Exception;
-    public Profile updateAdminProfile(ProfileDto profileDto,Long adminId) throws Exception;
     public String deleteProperty(Long propertyId) throws Exception;
 
 }

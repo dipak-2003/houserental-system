@@ -1,19 +1,22 @@
 package com.rental.houserental.controller;
-
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import com.rental.houserental.dto.LoggedUser;
 import com.rental.houserental.dto.OwnerProfileResponse;
 import com.rental.houserental.dto.PropertyDto;
 import com.rental.houserental.entity.Owner;
 import com.rental.houserental.entity.Property;
+import com.rental.houserental.enums.PropertyStatus;
 import com.rental.houserental.repository.OwnerRepository;
 import com.rental.houserental.service.CustomUserDetails;
 import com.rental.houserental.service.PropertyService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -51,15 +54,15 @@ public class OwnerController {
     @PostMapping("/add")
     public ResponseEntity<?> addProperty(
             @RequestHeader("Authorization") String authHeader,
-            @Valid @RequestBody PropertyDto propertyDto) {
+            @ModelAttribute PropertyDto propertyDto) {
 
         try {
             LoggedUser user = userDetailsService.loadUserByToken(authHeader);
-            if (user == null) return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+            if (user == null)
+                return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 
             Property property = new Property();
             property.setTitle(propertyDto.getTitle());
-            property.setLocation(propertyDto.getLocation());
             property.setPrice(propertyDto.getPrice());
             property.setType(propertyDto.getType());
             property.setDescription(propertyDto.getDescription());
@@ -68,8 +71,42 @@ public class OwnerController {
             property.setArea(propertyDto.getArea());
             property.setFurnished(propertyDto.isFurnished());
             property.setParkingAvailable(propertyDto.isParkingAvailable());
-            property.setImageUrl(propertyDto.getImageUrl());
-            property.setAvailable(propertyDto.isAvailable());
+            property.setDistrict(propertyDto.getDistrict());
+            property.setMunicipality(propertyDto.getMunicipality());
+            property.setWardNo(propertyDto.getWardNo());
+            property.setTole(propertyDto.getTole());
+            property.setHouseName(propertyDto.getHouseName());
+            property.setHouseNo(propertyDto.getHouseNo());
+            property.setApartmentNo(propertyDto.getApartmentNo());
+
+            // Status
+            property.setStatus(propertyDto.getStatus() != null ? propertyDto.getStatus() : PropertyStatus.PENDING);
+
+            // Images
+            if (propertyDto.getImages() != null && propertyDto.getImages().length > 0) {
+                int maxImages = 2;
+                MultipartFile[] images = propertyDto.getImages();
+                if (images.length > maxImages) {
+                    return new ResponseEntity<>("Maximum 2 images allowed", HttpStatus.BAD_REQUEST);
+                }
+
+                StringBuilder imagePaths = new StringBuilder();
+                String uploadDir = System.getProperty("user.dir") + "/uploads/properties/";
+                Path uploadPath = Paths.get(uploadDir);
+                if (!Files.exists(uploadPath)) Files.createDirectories(uploadPath);
+
+                for (MultipartFile file : images) {
+                    if (!file.isEmpty()) {
+                        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename().replaceAll("[^a-zA-Z0-9\\.\\-_]", "_");
+                        Path filePath = uploadPath.resolve(fileName);
+                        Files.write(filePath, file.getBytes());
+
+                        if (imagePaths.length() > 0) imagePaths.append(",");
+                        imagePaths.append(fileName);
+                    }
+                }
+                property.setImageUrl(imagePaths.toString());
+            }
 
             Property savedProperty = propertyService.addProperty(user.getId(), property);
             return new ResponseEntity<>(savedProperty, HttpStatus.CREATED);
@@ -79,20 +116,23 @@ public class OwnerController {
         }
     }
 
+
+
+
     // Update property
     @PutMapping("/update/{propertyId}")
     public ResponseEntity<?> updateProperty(
             @RequestHeader("Authorization") String authHeader,
             @PathVariable Long propertyId,
-            @Valid @RequestBody PropertyDto propertyDto) {
+            @ModelAttribute PropertyDto propertyDto) {  // Use @ModelAttribute if images are included
 
         try {
             LoggedUser user = userDetailsService.loadUserByToken(authHeader);
             if (user == null) return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 
+            // Map DTO to property
             Property updatedProperty = new Property();
             updatedProperty.setTitle(propertyDto.getTitle());
-            updatedProperty.setLocation(propertyDto.getLocation());
             updatedProperty.setPrice(propertyDto.getPrice());
             updatedProperty.setType(propertyDto.getType());
             updatedProperty.setDescription(propertyDto.getDescription());
@@ -101,7 +141,46 @@ public class OwnerController {
             updatedProperty.setArea(propertyDto.getArea());
             updatedProperty.setFurnished(propertyDto.isFurnished());
             updatedProperty.setParkingAvailable(propertyDto.isParkingAvailable());
-            updatedProperty.setImageUrl(propertyDto.getImageUrl());
+            // Location fields
+            updatedProperty.setDistrict(propertyDto.getDistrict());
+            updatedProperty.setMunicipality(propertyDto.getMunicipality());
+            updatedProperty.setWardNo(propertyDto.getWardNo());
+            updatedProperty.setTole(propertyDto.getTole());
+            updatedProperty.setHouseName(propertyDto.getHouseName());
+            updatedProperty.setHouseNo(propertyDto.getHouseNo());
+            updatedProperty.setApartmentNo(propertyDto.getApartmentNo());
+
+            // Status
+            updatedProperty.setStatus(propertyDto.getStatus() != null ? propertyDto.getStatus() : PropertyStatus.PENDING);
+
+            // Handle images if uploaded
+            if (propertyDto.getImages() != null && propertyDto.getImages().length > 0) {
+                int maxImages = 2;
+                MultipartFile[] images = propertyDto.getImages();
+                if (images.length > maxImages) {
+                    return new ResponseEntity<>("Maximum 2 images allowed", HttpStatus.BAD_REQUEST);
+                }
+
+                StringBuilder imagePaths = new StringBuilder();
+                String uploadDir = System.getProperty("user.dir") + "/uploads/properties/";
+                Path uploadPath = Paths.get(uploadDir);
+                if (!Files.exists(uploadPath)) Files.createDirectories(uploadPath);
+
+                for (MultipartFile file : images) {
+                    if (!file.isEmpty()) {
+                        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename().replaceAll("[^a-zA-Z0-9\\.\\-_]", "_");
+                        Path filePath = uploadPath.resolve(fileName);
+                        Files.write(filePath, file.getBytes());
+
+                        if (imagePaths.length() > 0) imagePaths.append(",");
+                        imagePaths.append(fileName);
+                    }
+                }
+                updatedProperty.setImageUrl(imagePaths.toString());
+            } else {
+                // Keep existing image if no new image is uploaded
+                updatedProperty.setImageUrl(propertyDto.getImageUrl());
+            }
 
             Property property = propertyService.updateProperty(propertyId, user.getId(), updatedProperty);
             return new ResponseEntity<>(property, HttpStatus.OK);
@@ -110,6 +189,8 @@ public class OwnerController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+
 
     // Delete property
     @DeleteMapping("/delete/{propertyId}")
@@ -129,15 +210,27 @@ public class OwnerController {
         }
     }
 
+
+
     // Get all properties of owner
     @GetMapping("/my-properties")
     public ResponseEntity<?> getOwnerProperties(@RequestHeader("Authorization") String authHeader) {
         try {
             LoggedUser user = userDetailsService.loadUserByToken(authHeader);
-            if (user == null) return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+            if (user == null) {
+                return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+            }
 
             List<Property> properties = propertyService.getOwnerProperties(user.getId());
-            return new ResponseEntity<>(properties, HttpStatus.OK);
+
+            List<Property> filteredProperties = properties.stream()
+                    .filter(property ->
+                            !property.getStatus().equals(PropertyStatus.PENDING) &&
+                                    !property.getStatus().equals(PropertyStatus.REJECTED)
+                    )
+                    .toList();
+
+            return new ResponseEntity<>(filteredProperties, HttpStatus.OK);
 
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

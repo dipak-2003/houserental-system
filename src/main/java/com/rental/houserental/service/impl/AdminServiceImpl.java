@@ -70,27 +70,6 @@ public class AdminServiceImpl implements AdminService {
         tenantRepository.deleteById(tenantId);
     }
 
-    @Override
-    public Profile getProfileByAdminId(Long adminId) {
-
-        return profileRepository.findByAdminId(adminId)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
-    }
-
-    @Override
-    public Profile updateAdminProfile(ProfileDto profileDto, Long adminId) {
-
-        Profile profile = profileRepository.findByAdminId(adminId)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
-
-        Admin admin = adminRepository.findById(adminId)
-                .orElseThrow(() -> new RuntimeException("Admin not found"));
-
-        profile.setImages(profileDto.getImg_path());
-        profile.setAdmin(admin);
-
-        return profileRepository.save(profile);
-    }
 
     @Override
     public String deleteProperty(Long propertyId) {

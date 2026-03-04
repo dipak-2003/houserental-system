@@ -1,14 +1,14 @@
 package com.rental.houserental.dto;
-
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class ProfileDto {
-    private String fullName;
-    private String img_path;
 
+    private MultipartFile image;  // for upload
+    private String images;        // store filename
+    private String email;
+    private String fullName;
+    private String phone;
+    private String address;
 }

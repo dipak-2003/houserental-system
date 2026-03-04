@@ -1,6 +1,7 @@
 package com.rental.houserental.repository;
 
 import com.rental.houserental.entity.Profile;
+import com.rental.houserental.enums.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

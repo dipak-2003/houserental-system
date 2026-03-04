@@ -2,11 +2,8 @@ package com.rental.houserental.dto;
 
 import com.rental.houserental.enums.PropertyStatus;
 import jakarta.validation.constraints.*;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -18,9 +15,6 @@ public class PropertyDto {
     @NotBlank(message = "Title is required")
     private String title;
 
-    @NotBlank(message = "Location is required")
-    private String location;
-
     @Positive(message = "Price must be greater than zero")
     private double price;
 
@@ -29,6 +23,24 @@ public class PropertyDto {
 
     @Size(max = 1000, message = "Description can be at most 1000 characters")
     private String description;
+
+    // Location Info
+    @NotBlank(message = "District is required")
+    private String district;
+
+    @NotBlank(message = "Municipality is required")
+    private String municipality;
+
+    @Min(value = 1, message = "Ward number must be at least 1")
+    private int wardNo;
+
+    @NotBlank(message = "Tole is required")
+    private String tole;
+
+    // House/Apartment Info
+    private String houseName;
+    private String houseNo;
+    private String apartmentNo;
 
     // House Details
     @Min(value = 0, message = "Bedrooms cannot be negative")
@@ -43,17 +55,16 @@ public class PropertyDto {
     private boolean furnished;
     private boolean parkingAvailable;
 
-    // Image URL
-    @NotBlank(message = "Image URL is required")
+    // Images
+    private MultipartFile[] images;
+
+    // Keep for storing final image URLs in DB (comma-separated)
     private String imageUrl;
 
     // Availability
     private boolean available = true;
 
-    // Status (OPTIONAL, default could be AVAILABLE)
+    // Status (OPTIONAL)
     private PropertyStatus status;
 
-    // Owner ID (to associate property)
-    @NotNull(message = "Owner ID is required")
-    private Long ownerId;
 }

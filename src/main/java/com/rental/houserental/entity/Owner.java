@@ -1,5 +1,7 @@
 package com.rental.houserental.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rental.houserental.enums.OwnerStatus;
 import com.rental.houserental.enums.Role;
 import jakarta.persistence.*;
@@ -7,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Table(name = "owners")
@@ -42,6 +46,8 @@ public class Owner {
     @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL)
     private Profile profile;
 
-
+    @OneToMany(mappedBy = "owner")
+    @JsonBackReference
+   private List<Property> properties;
 
 }

@@ -1,12 +1,11 @@
 package com.rental.houserental.controller;
 
 import com.rental.houserental.dto.LoggedUser;
-import com.rental.houserental.entity.Booking;
-import com.rental.houserental.entity.Owner;
-import com.rental.houserental.entity.Property;
-import com.rental.houserental.entity.Tenant;
+import com.rental.houserental.entity.*;
+import com.rental.houserental.repository.AdminRepository;
 import com.rental.houserental.service.AdminService;
 import com.rental.houserental.service.CustomUserDetails;
+import com.rental.houserental.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +22,10 @@ public class AdminController {
 
     @Autowired
     private AdminService adminService;
+
+    @Autowired
+    private PropertyService propertyService;
+
 
 
     @GetMapping("/dashboard")
@@ -84,4 +87,21 @@ public class AdminController {
     public ResponseEntity<String> deleteProperty(@PathVariable Long id) throws Exception {
         return ResponseEntity.ok(adminService.deleteProperty(id));
     }
+
+    @PutMapping("/property/approve/{id}")
+    public ResponseEntity<?> updatePropertyApproveStatus( @RequestHeader("Authorization") String authHeader,
+    @PathVariable Long id) throws Exception {
+        LoggedUser loggedAdmin=userDetailsService.loadUserByToken(authHeader);
+        Property property=propertyService.approveProperty(id,loggedAdmin.getId());
+         return new ResponseEntity<>(property,HttpStatus.OK);
+        }
+
+    @PutMapping("/property/reject/{id}")
+    public ResponseEntity<?> updatePropertyRejectStatus( @RequestHeader("Authorization") String authHeader,
+                                                   @PathVariable Long id) throws Exception {
+        LoggedUser loggedAdmin=userDetailsService.loadUserByToken(authHeader);
+        Property property=propertyService.rejectProperty(id,loggedAdmin.getId());
+        return new ResponseEntity<>(property,HttpStatus.OK);
+    }
+
 }
