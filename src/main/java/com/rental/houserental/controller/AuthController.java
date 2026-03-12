@@ -123,6 +123,8 @@ public class AuthController {
         Long id = null;
         String fullName = null;
         String role = null;
+        String authEmail=null;
+
         String email = request.getEmail();
 
         // Check Admin
@@ -132,6 +134,7 @@ public class AuthController {
             id = admin.getId();
             fullName = admin.getFullName();
             role = admin.getRole().name();
+            authEmail=admin.getEmail();
         }
 
         // Check Owner
@@ -141,6 +144,7 @@ public class AuthController {
             id = owner.getId();
             fullName = owner.getFullName();
             role = owner.getRole().name();
+            authEmail=owner.getEmail();
         }
 
         // Check Tenant
@@ -150,6 +154,7 @@ public class AuthController {
             id = tenant.getId();
             fullName = tenant.getFullName();
             role = tenant.getRole().name();
+            authEmail=tenant.getEmail();
         }
 
         // Generate JWT with role
@@ -160,6 +165,7 @@ public class AuthController {
                 fullName,
                 role,
                 token,
+                authEmail,
                 "Login Successful"
         );
 

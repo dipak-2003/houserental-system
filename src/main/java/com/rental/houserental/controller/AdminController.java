@@ -1,8 +1,6 @@
 package com.rental.houserental.controller;
-
 import com.rental.houserental.dto.LoggedUser;
 import com.rental.houserental.entity.*;
-import com.rental.houserental.repository.AdminRepository;
 import com.rental.houserental.service.AdminService;
 import com.rental.houserental.service.CustomUserDetails;
 import com.rental.houserental.service.PropertyService;

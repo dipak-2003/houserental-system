@@ -2,15 +2,18 @@ package com.rental.houserental.service.impl;
 
 
 import com.rental.houserental.dto.DashboardDto;
-import com.rental.houserental.dto.ProfileDto;
 import com.rental.houserental.entity.*;
 import com.rental.houserental.enums.BookingStatus;
+import com.rental.houserental.enums.PropertyStatus;
 import com.rental.houserental.repository.*;
 import com.rental.houserental.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.rental.houserental.enums.PropertyStatus.*;
+
 @Service
 public class AdminServiceImpl implements AdminService {
 
@@ -36,7 +39,8 @@ public class AdminServiceImpl implements AdminService {
         dashboardDto.setTotalOwners(ownerRepository.count());
         dashboardDto.setTotalBookings(bookingRepository.countByStatus(BookingStatus.BOOKED));
         dashboardDto.setBookedProperties(bookingRepository.countByStatus(BookingStatus.BOOKED));
-        dashboardDto.setAvailableProperties(bookingRepository.countByStatus(BookingStatus.AVAILABLE));
+        dashboardDto.setAvailableProperties(propertyRepository.countByBookingStatus(BookingStatus.AVAILABLE));
+        dashboardDto.setTotalProperties(propertyRepository.count());
       return dashboardDto;
     }
 

@@ -19,6 +19,7 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
 
     Optional<Property> findByIdAndStatus(Long id, PropertyStatus status);
     Long countByStatus(PropertyStatus status);
+    Long countByBookingStatus(BookingStatus status);
     List<Property> findByOwner(Owner owner);
     List<Property> findByBookingStatus(BookingStatus bookingStatus);
 
