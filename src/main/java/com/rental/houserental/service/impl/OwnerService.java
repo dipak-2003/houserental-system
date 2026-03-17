@@ -55,7 +55,7 @@ public class OwnerService {
         owner.setStatus(OwnerStatus.APPROVED);
         ownerRepository.save(owner);
 
-        //send approve owner
+        //send  email  approve owner
         emailService.sendOwnerApprovalEmail(owner.getEmail());
     }
 //for rejecting the owner

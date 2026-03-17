@@ -41,9 +41,11 @@ public class Owner {
 
     @ManyToOne
     @JoinColumn(name = "admin_id")
+    @JsonIgnore
     private Admin admin;
 
     @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Profile profile;
 
     @OneToMany(mappedBy = "owner")

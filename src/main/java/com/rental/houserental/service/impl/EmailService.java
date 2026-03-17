@@ -25,4 +25,22 @@ public class EmailService {
 
         mailSender.send(message);
     }
+
+    //for sending the approval email
+    public void sendPropertyApprovalEmail(String toEmail, String propertyTitle) {
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(toEmail);
+        message.setSubject("Property Approved");
+
+        message.setText(
+                "Dear Owner,\n\n" +
+                        "Your property \"" + propertyTitle + "\" has been approved by the admin.\n" +
+                        "It is now visible to tenants in the system.\n\n" +
+                        "Thank you for listing with us.\n" +
+                        "House Rental Team"
+        );
+
+        mailSender.send(message);
+    }
 }

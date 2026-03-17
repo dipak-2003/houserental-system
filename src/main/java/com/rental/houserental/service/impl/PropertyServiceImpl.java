@@ -18,7 +18,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class PropertyServiceImpl implements PropertyService {
-
+    private final EmailService emailService;
     private final PropertyRepository propertyRepository;
     private final OwnerRepository ownerRepository;
     @Autowired
@@ -78,8 +78,14 @@ public class PropertyServiceImpl implements PropertyService {
         property.setAdmin(admin);
         property.setStatus(PropertyStatus.APPROVED);
         property.setBookingStatus(BookingStatus.AVAILABLE);
+        Property savedProperty = propertyRepository.save(property);
 
-        return propertyRepository.save(property);
+        // EMAIL NOTIFICATION
+    String ownerEmail = savedProperty.getOwner().getEmail();
+    String propertyTitle = savedProperty.getTitle();
+
+    emailService.  sendPropertyApprovalEmail(ownerEmail, propertyTitle);
+        return savedProperty;
     }
 
     @Override
