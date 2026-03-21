@@ -1,5 +1,6 @@
 package com.rental.houserental.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rental.houserental.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -33,8 +34,10 @@ public class Tenant {
 
     @ManyToOne
     @JoinColumn(name = "admin_id")
+    @JsonIgnore
     private Admin admin;
 
     @OneToOne(mappedBy = "tenant", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Profile profile;
 }

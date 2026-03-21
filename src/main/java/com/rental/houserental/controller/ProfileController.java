@@ -2,7 +2,9 @@ package com.rental.houserental.controller;
 
 import com.rental.houserental.dto.LoggedUser;
 import com.rental.houserental.dto.ProfileDto;
+import com.rental.houserental.entity.Owner;
 import com.rental.houserental.entity.Profile;
+import com.rental.houserental.repository.OwnerRepository;
 import com.rental.houserental.service.CustomUserDetails;
 import com.rental.houserental.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +24,8 @@ public class ProfileController {
 
     @Autowired
     private CustomUserDetails customUserDetailsService;
-
+    @Autowired
+    private OwnerRepository ownerRepository;
     @Autowired
     private ProfileService profileService;
 
@@ -45,7 +48,6 @@ public class ProfileController {
             @ModelAttribute ProfileDto profileDto) throws Exception {
 
         LoggedUser user = customUserDetailsService.loadUserByToken(authHeader);
-
         // Ensure upload directory exists
         File directory = new File(uploadDir);
         if (!directory.exists()) directory.mkdirs();

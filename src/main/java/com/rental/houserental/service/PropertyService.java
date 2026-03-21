@@ -21,14 +21,10 @@ public interface PropertyService {
     Property getPropertyById(Long propertyId);
     Property getPropertyWithOwner(Long propertyId) ;
     // Search property
-    List<Property> searchProperty(
-            String tole,
-            String municipality,
-            String type,
-            Double minPrice,
-            Double maxPrice,
-            Integer bedrooms
-    );
+    public List<Property> searchProperty(String keyword, String type,
+                                         Double minPrice, Double maxPrice,
+                                         Double minArea, Double maxArea,
+                                         Integer bedrooms);
 
 
 

@@ -3,18 +3,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import com.rental.houserental.dto.LoggedUser;
-import com.rental.houserental.dto.OwnerProfileResponse;
+import com.rental.houserental.dto.OwnerDashDto;
 import com.rental.houserental.dto.PropertyDto;
-import com.rental.houserental.entity.Owner;
 import com.rental.houserental.entity.Property;
 import com.rental.houserental.enums.PropertyStatus;
 import com.rental.houserental.repository.OwnerRepository;
 import com.rental.houserental.service.CustomUserDetails;
 import com.rental.houserental.service.PropertyService;
+import com.rental.houserental.service.impl.OwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,21 +31,16 @@ public class OwnerController {
 
     @Autowired
     private CustomUserDetails userDetailsService;
-
-    @GetMapping("/profile")
-    public OwnerProfileResponse getProfile(Authentication authentication) {
-
-        String email = authentication.getName();
-
-        Owner owner = ownerRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Owner not found"));
-
-        return new OwnerProfileResponse(
-                owner.getId(),
-                owner.getFullName(),
-                owner.getEmail(),
-                owner.getPhone()
-        );
+    @Autowired
+    private OwnerService ownerService;
+    @GetMapping("/dashboard")
+    public ResponseEntity<?> getOwnerDash(@RequestHeader("Authorization") String authHeader) throws Exception {
+        LoggedUser user = userDetailsService.loadUserByToken(authHeader);
+        if (user == null){
+            return new ResponseEntity<>("Not logged",HttpStatus.BAD_REQUEST);
+        }
+        OwnerDashDto ownerDashDto=ownerService.getDashDetails(user.getId());
+        return new ResponseEntity<>(ownerDashDto,HttpStatus.OK);
     }
 
 

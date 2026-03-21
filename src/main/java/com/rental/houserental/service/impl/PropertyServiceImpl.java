@@ -133,9 +133,21 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     @Override
-    public List<Property> searchProperty(String tole, String municipality, String type, Double minPrice, Double maxPrice, Integer bedrooms) {
-        BookingStatus status = BookingStatus.AVAILABLE;
-        return propertyRepository.searchProperty(tole, municipality, type, minPrice, maxPrice, bedrooms, status);
+    public List<Property> searchProperty(String keyword, String type,
+                                         Double minPrice, Double maxPrice,
+                                         Double minArea, Double maxArea,
+                                         Integer bedrooms) {
+
+        // Call repository method with parameters in the exact order defined in the @Query
+        return propertyRepository.searchByKeywordAndFilters(
+                keyword,     // Keyword search (title, description, tole, municipality, etc.)
+                minPrice,    // Minimum price filter
+                maxPrice,    // Maximum price filter
+                minArea,     // Minimum area filter
+                maxArea,     // Maximum area filter
+                bedrooms,    // Bedrooms filter
+                type       // Property type filter
+        );
     }
 
 

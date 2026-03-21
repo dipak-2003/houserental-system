@@ -1,10 +1,14 @@
 package com.rental.houserental.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.rental.houserental.enums.BookingStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
 @Entity
 @Table(name = "bookings")
 @AllArgsConstructor
@@ -17,6 +21,7 @@ public class Booking {
 
     @Enumerated(EnumType.STRING)
     private BookingStatus status;
+
 
     // Tenant who books
     @ManyToOne
@@ -31,7 +36,12 @@ public class Booking {
     // Owner of property
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
+    @JsonIgnore
     private Owner owner;
+
+    @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+//   @JsonManagedReference
+    private BookedDetail bookedDetail;
 
 
 
