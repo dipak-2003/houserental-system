@@ -14,22 +14,13 @@ import java.util.Optional;
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("SELECT b FROM Booking b " +
-            "LEFT JOIN FETCH b.bookedDetail " +
             "LEFT JOIN FETCH b.tenant " +
             "LEFT JOIN FETCH b.property " +
             "LEFT JOIN FETCH b.owner")
     List<Booking> findAllWithDetails();
 
-    @Query("SELECT b FROM Booking b " +
-            "LEFT JOIN FETCH b.bookedDetail " +
-            "LEFT JOIN FETCH b.tenant " +
-            "LEFT JOIN FETCH b.property " +
-            "LEFT JOIN FETCH b.owner " +
-            "WHERE b.tenant.id = :tenantId")
-    Optional<Booking> findByTenantIdWithDetails(@Param("tenantId") Long tenantId);
 
     @Query("SELECT b FROM Booking b " +
-            "LEFT JOIN FETCH b.bookedDetail " +
             "LEFT JOIN FETCH b.tenant " +
             "LEFT JOIN FETCH b.property " +
             "WHERE b.owner.id = :ownerId")

@@ -1,6 +1,6 @@
 package com.rental.houserental.service;
 
-import com.rental.houserental.entity.BookedDetail;
+import com.rental.houserental.dto.BookedDetail;
 import com.rental.houserental.entity.Booking;
 import com.rental.houserental.enums.BookingStatus;
 

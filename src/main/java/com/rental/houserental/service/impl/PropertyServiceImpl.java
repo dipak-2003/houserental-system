@@ -1,5 +1,4 @@
 package com.rental.houserental.service.impl;
-
 import com.rental.houserental.entity.Admin;
 import com.rental.houserental.entity.Owner;
 import com.rental.houserental.entity.Property;

@@ -45,7 +45,7 @@ public class OwnerController {
 
 
     // Add property
-    @PostMapping("/add-property")
+    @PostMapping("/add")
     public ResponseEntity<?> addProperty(
             @RequestHeader("Authorization") String authHeader,
             @ModelAttribute PropertyDto propertyDto) {
@@ -95,7 +95,7 @@ public class OwnerController {
                         Path filePath = uploadPath.resolve(fileName);
                         Files.write(filePath, file.getBytes());
 
-                        if (!imagePaths.isEmpty()) imagePaths.append(",");
+                        if (imagePaths.length() > 0) imagePaths.append(",");
                         imagePaths.append(fileName);
                     }
                 }

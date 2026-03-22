@@ -44,9 +44,6 @@ public class Owner {
     @JsonIgnore
     private Admin admin;
 
-    @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private Profile profile;
 
     @OneToMany(mappedBy = "owner")
     @JsonBackReference

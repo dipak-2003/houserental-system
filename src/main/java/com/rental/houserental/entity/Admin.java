@@ -51,7 +51,5 @@ public class Admin {
     @JsonManagedReference
     private List<Payment> payments;
 
-    @OneToOne(mappedBy = "admin", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private Profile profile;
+
 }

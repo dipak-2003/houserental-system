@@ -37,7 +37,4 @@ public class Tenant {
     @JsonIgnore
     private Admin admin;
 
-    @OneToOne(mappedBy = "tenant", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private Profile profile;
 }

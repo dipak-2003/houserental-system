@@ -39,9 +39,9 @@ public class Booking {
     @JsonIgnore
     private Owner owner;
 
-    @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-//   @JsonManagedReference
-    private BookedDetail bookedDetail;
+   private String phone;
+
+   private String address;
 
 
 

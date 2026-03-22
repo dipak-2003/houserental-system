@@ -1,10 +1,9 @@
 package com.rental.houserental.controller;
 
+import com.rental.houserental.dto.BookedDetail;
 import com.rental.houserental.dto.LoggedUser;
-import com.rental.houserental.entity.BookedDetail;
 import com.rental.houserental.entity.Booking;
 import com.rental.houserental.enums.BookingStatus;
-import com.rental.houserental.repository.BookedDetailRepository;
 import com.rental.houserental.service.BookingService;
 import com.rental.houserental.service.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +16,7 @@ import java.util.List;
 @RequestMapping("/api")
 @RestController
 public class BookingController {
-    @Autowired
-    private BookedDetailRepository bookedDetailRepository;
+
     @Autowired
     private CustomUserDetails userDetailsService;
     @Autowired
@@ -29,9 +27,7 @@ public class BookingController {
                                           @RequestBody BookedDetail bookedDetail,
                                           @RequestHeader("Authorization") String authHeader) throws Exception {
         LoggedUser user = userDetailsService.loadUserByToken(authHeader);
-        BookedDetail bookedDetail1=bookedDetailRepository.save(bookedDetail);
-        BookedDetail gotDetails=bookedDetailRepository.findById(bookedDetail1.getId()).get();
-        Booking booking = bookingService.bookProperty(id, user.getId(),gotDetails);
+        Booking booking = bookingService.bookProperty(id, user.getId(),bookedDetail);
         return new ResponseEntity<Booking>(booking, HttpStatus.OK);
     }
 
