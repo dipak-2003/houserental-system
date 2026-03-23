@@ -11,6 +11,7 @@ import com.rental.houserental.enums.Role;
 import com.rental.houserental.repository.AdminRepository;
 import com.rental.houserental.repository.OwnerRepository;
 import com.rental.houserental.repository.TenantRepository;
+import com.rental.houserental.service.impl.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -19,12 +20,15 @@ import org.springframework.security.authentication.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.SecureRandom;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-
+    @Autowired
+    private EmailService emailService;
     @Autowired
     private TenantRepository tenantRepository;
 
@@ -51,8 +55,7 @@ public class AuthController {
 
     @Value("${app.admin.password}")
     private String adminPassword;
-
-    // ================= REGISTER =================
+    
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
 
@@ -104,7 +107,6 @@ public class AuthController {
                 .body("Tenant Registered Successfully");
     }
 
-    // ================= LOGIN =================
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
 
@@ -172,5 +174,76 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
+
+    @PostMapping("/forget-password")
+    public ResponseEntity<String> forgetPassword(@RequestBody Map<String, String> request) {
+
+        String email = request.get("email");
+
+        Optional<Admin> adminOpt = adminRepository.findByEmail(email);
+        Optional<Tenant> tenantOpt = tenantRepository.findByEmail(email);
+        Optional<Owner> ownerOpt = ownerRepository.findByEmail(email);
+
+        SecureRandom random = new SecureRandom();
+        String token = String.format("%06d", random.nextInt(1000000));
+
+        if (ownerOpt.isPresent()) {
+            Owner owner = ownerOpt.get();
+            owner.setResetToken(token);
+            ownerRepository.save(owner);
+            emailService.sendResetMail(owner.getFullName(), owner.getEmail(), token);
+            return ResponseEntity.ok("Reset link sent to owner");
+        }
+
+        if (adminOpt.isPresent()) {
+            Admin admin = adminOpt.get();
+            admin.setResetToken(token);
+            adminRepository.save(admin);
+            emailService.sendResetMail(admin.getFullName(), admin.getEmail(), token);
+            return ResponseEntity.ok("Reset link sent to admin");
+        }
+
+        if (tenantOpt.isPresent()) {
+            Tenant tenant = tenantOpt.get();
+            tenant.setResetToken(token);
+            tenantRepository.save(tenant);
+            emailService.sendResetMail(tenant.getFullName(), tenant.getEmail(), token);
+            return ResponseEntity.ok("Reset link sent to tenant");
+        }
+
+        return ResponseEntity.badRequest().body("Email not found");
+    }
+    @PutMapping("/reset")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
+
+        String token = request.get("token");
+        String password = request.get("password");
+
+        Admin admin = adminRepository.findByResetToken(token);
+        Owner owner = ownerRepository.findByResetToken(token);
+        Tenant tenant = tenantRepository.findByResetToken(token);
+
+        String encodePass = passwordEncoder.encode(password);
+
+        if (admin != null) {
+            admin.setPassword(encodePass);
+            admin.setResetToken(null); // clear token
+            return new ResponseEntity<>(adminRepository.save(admin), HttpStatus.OK);
+        }
+
+        if (owner != null) {
+            owner.setPassword(encodePass);
+            owner.setResetToken(null);
+            return new ResponseEntity<>(ownerRepository.save(owner), HttpStatus.OK);
+        }
+
+        if (tenant != null) {
+            tenant.setPassword(encodePass);
+            tenant.setResetToken(null);
+            return new ResponseEntity<>(tenantRepository.save(tenant), HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>("Invalid token", HttpStatus.BAD_REQUEST);
+    }
 
 }

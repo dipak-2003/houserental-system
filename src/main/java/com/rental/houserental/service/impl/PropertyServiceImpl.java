@@ -83,7 +83,7 @@ public class PropertyServiceImpl implements PropertyService {
     String ownerEmail = savedProperty.getOwner().getEmail();
     String propertyTitle = savedProperty.getTitle();
 
-    emailService.  sendPropertyApprovalEmail(ownerEmail, propertyTitle);
+    emailService.sendApprovalEmail(ownerEmail, propertyTitle,savedProperty.getOwner().getFullName(), String.valueOf(savedProperty.getStatus()));
         return savedProperty;
     }
 
@@ -96,7 +96,11 @@ public class PropertyServiceImpl implements PropertyService {
         property.setAdmin(admin);
         property.setStatus(PropertyStatus.REJECTED);
 
-        return propertyRepository.save(property);
+        Property saved= propertyRepository.save(property);
+        String ownerEmail = saved.getOwner().getEmail();
+        String propertyTitle = saved.getTitle();
+        emailService.sendApprovalEmail(ownerEmail, propertyTitle,saved.getOwner().getFullName(), String.valueOf(saved.getStatus()));
+       return saved;
     }
 
     @Override

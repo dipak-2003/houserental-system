@@ -28,6 +28,7 @@ public class Tenant {
     @Column(nullable = false)
     private String password;
 
+    private String resetToken;
 
     @Enumerated(EnumType.STRING)
     private Role role;

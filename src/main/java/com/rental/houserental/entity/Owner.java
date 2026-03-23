@@ -32,6 +32,7 @@ public class Owner {
 
     private String phone;
 
+    private String resetToken;
 
     @Enumerated(EnumType.STRING)
     private Role role;

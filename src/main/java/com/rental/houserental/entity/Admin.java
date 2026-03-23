@@ -34,6 +34,8 @@ public class Admin {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private String resetToken;
+
     // Relationships
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
