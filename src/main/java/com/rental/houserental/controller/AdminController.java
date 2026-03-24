@@ -1,6 +1,9 @@
 package com.rental.houserental.controller;
 import com.rental.houserental.dto.LoggedUser;
+import com.rental.houserental.dto.PropertyReviewDto;
 import com.rental.houserental.entity.*;
+import com.rental.houserental.mapper.ReviewMapper;
+import com.rental.houserental.repository.PropertyRepository;
 import com.rental.houserental.service.AdminService;
 import com.rental.houserental.service.CustomUserDetails;
 import com.rental.houserental.service.PropertyService;
@@ -24,7 +27,8 @@ public class AdminController {
     @Autowired
     private PropertyService propertyService;
 
-
+    @Autowired
+    private PropertyRepository propertyRepository;
 
     @GetMapping("/dashboard")
     public ResponseEntity<?> dashboard(
@@ -102,4 +106,16 @@ public class AdminController {
         return new ResponseEntity<>(property,HttpStatus.OK);
     }
 
+    @GetMapping("/property/review/{id}")
+    public ResponseEntity<?> reviewProperty( @RequestHeader("Authorization") String authHeader,
+                                                    @PathVariable Long id) throws Exception {
+        LoggedUser loggedAdmin=userDetailsService.loadUserByToken(authHeader);
+        if(loggedAdmin==null){
+            return new ResponseEntity<String>("Unauthorised",HttpStatus.UNAUTHORIZED);
+        }
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Property not found"));
+        PropertyReviewDto propertyReviewDto= ReviewMapper.mapToDto(property);
+        return new ResponseEntity<>(propertyReviewDto,HttpStatus.OK);
+    }
 }

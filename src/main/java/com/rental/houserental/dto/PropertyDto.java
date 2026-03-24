@@ -1,70 +1,43 @@
 package com.rental.houserental.dto;
-
 import com.rental.houserental.enums.PropertyStatus;
-import jakarta.validation.constraints.*;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
+import java.util.List;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class PropertyDto {
 
-    // Basic Info
-    @NotBlank(message = "Title is required")
+    // BASIC
     private String title;
-
-    @Positive(message = "Price must be greater than zero")
-    private double price;
-
-    @NotBlank(message = "Type is required") // e.g., ROOM / HOUSE / APARTMENT
+    private Double price;
     private String type;
-
-    @Size(max = 1000, message = "Description can be at most 1000 characters")
+    private String houseNo;
     private String description;
 
-    // Location Info
-    @NotBlank(message = "District is required")
+    // LOCATION
     private String district;
-
-    @NotBlank(message = "Municipality is required")
     private String municipality;
-
-    @Min(value = 1, message = "Ward number must be at least 1")
-    private int wardNo;
-
-    @NotBlank(message = "Tole is required")
+    private Integer wardNo;
     private String tole;
 
-    // House/Apartment Info
-    private String houseName;
-    private String houseNo;
-    private String apartmentNo;
+    // DETAILS
+    private Integer bedrooms;
+    private Integer bathrooms;
+    private Double area;
+    private Boolean furnished;
+    private Boolean parkingAvailable;
 
-    // House Details
-    @Min(value = 0, message = "Bedrooms cannot be negative")
-    private int bedrooms;
+    // ✅ SINGLE IMAGE
+    private MultipartFile image;
 
-    @Min(value = 0, message = "Bathrooms cannot be negative")
-    private int bathrooms;
+    // DOCUMENTS
+    private MultipartFile citizenFront;
+    private MultipartFile citizenBack;
+    private MultipartFile passportPhoto;
 
-    @Positive(message = "Area must be positive")
-    private double area; // in sq ft
+    private String phoneNo;
 
-    private boolean furnished;
-    private boolean parkingAvailable;
-
-    // Images
-    private MultipartFile[] images;
-
-    // Keep for storing final image URLs in DB (comma-separated)
-    private String imageUrl;
-
-    // Availability
-    private boolean available = true;
-
-    // Status (OPTIONAL)
+    private Boolean available;
     private PropertyStatus status;
-
 }

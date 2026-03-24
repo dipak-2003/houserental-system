@@ -4,140 +4,44 @@ public class MailTemplate {
 
     public static String buildApprovalTemplate(String ownerName, String propertyTitle) {
         return """
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="UTF-8">
-        <style>
-            body {
-                font-family: 'Segoe UI', Arial, sans-serif;
-                background-color: #eef2f7;
-                margin: 0;
-                padding: 0;
-            }
-
-            .container {
-                max-width: 600px;
-                margin: 40px auto;
-                background: #ffffff;
-                border-radius: 14px;
-                overflow: hidden;
-                box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-            }
-
-            .header {
-                background: linear-gradient(135deg, #22c55e, #16a34a);
-                color: white;
-                padding: 22px;
-                text-align: center;
-                font-size: 24px;
-                font-weight: bold;
-                letter-spacing: 0.5px;
-            }
-
-            .content {
-                padding: 30px;
-                color: #334155;
-            }
-
-            .title {
-                font-size: 20px;
-                font-weight: 600;
-                margin-bottom: 10px;
-            }
-
-            .success-box {
-                background: #f0fdf4;
-                padding: 15px;
-                border-radius: 10px;
-                margin: 20px 0;
-                border-left: 5px solid #22c55e;
-            }
-
-            .property-box {
-                background: #f8fafc;
-                padding: 15px;
-                border-radius: 8px;
-                margin-top: 10px;
-                font-weight: 500;
-            }
-
-            .badge {
-                display: inline-block;
-                margin-top: 10px;
-                padding: 6px 14px;
-                background: #22c55e;
-                color: white;
-                border-radius: 50px;
-                font-size: 12px;
-                font-weight: bold;
-            }
-
-            .btn {
-                display: inline-block;
-                padding: 12px 20px;
-                background: linear-gradient(135deg, #22c55e, #16a34a);
-                color: white !important;
-                text-decoration: none;
-                border-radius: 8px;
-                margin-top: 25px;
-                font-weight: 600;
-            }
-
-            .footer {
-                text-align: center;
-                font-size: 12px;
-                color: #94a3b8;
-                padding: 18px;
-                background: #f8fafc;
-            }
-        </style>
-    </head>
-
-    <body>
-
-        <div class="container">
-
-            <div class="header">
-                 RentalHub
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f1f5f9; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .header { background: #6366f1; color: white; padding: 30px; text-align: center; font-size: 24px; font-weight: bold; }
+        .content { padding: 30px; color: #334155; line-height: 1.6; }
+        .status-box { background: #f0fdf4; padding: 20px; border-radius: 8px; border-left: 4px solid #22c55e; margin: 20px 0; }
+        .property-info { background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 10px; }
+        .badge { display: inline-block; padding: 4px 12px; background: #22c55e; color: white; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; margin-top: 8px; }
+        .footer { text-align: center; font-size: 12px; color: #94a3b8; padding: 25px; background: #f8fafc; border-top: 1px solid #e2e8f0; }
+        strong { color: #1e293b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">RentalHub</div>
+        <div class="content">
+            <h2 style="margin-top:0;">Hello %s,</h2>
+            <div class="status-box">
+                <strong style="color: #166534;">Congratulations!</strong> Your property listing has been approved and is now live.
             </div>
-
-            <div class="content">
-
-                <div class="title">
-                    Hello %s 
-                </div>
-
-                <div class="success-box">
-                     <strong>Congratulations!</strong> Your property has been approved.
-                </div>
-
-                <p>Your listing is now live and available for tenants.</p>
-
-                <div class="property-box">
-                    <strong>Property:</strong> %s <br/>
-                    <span class="badge">APPROVED</span>
-                </div>
-
-                <p>You can now start receiving inquiries and bookings.</p>
-
-
-                <p style="margin-top:20px;">
-                    Thank you for choosing <strong>RentalHub</strong>.
-                </p>
-
+            <div class="property-info">
+                <strong>Property:</strong> %s <br/>
+                <span class="badge">Live & Approved</span>
             </div>
-
-            <div class="footer">
-                © 2026 RentalHub • Kanchanpur, Nepal <br/>
-                Making renting simple & smart
-            </div>
-
+            <p>Tenants can now view and book your property. We'll notify you as soon as you receive inquiries.</p>
         </div>
-
-    </body>
-    </html>
-    """.formatted(ownerName, propertyTitle);
+        <div class="footer">
+            © 2026 RentalHub • Kanchanpur, Nepal <br/>
+            Making renting simple & smart
+        </div>
+    </div>
+</body>
+</html>
+""".formatted(ownerName, propertyTitle);
     }
     public static String buildRejectedTemplate(String ownerName, String propertyTitle) {
         return """
@@ -146,134 +50,36 @@ public class MailTemplate {
 <head>
     <meta charset="UTF-8">
     <style>
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background-color: #eef2f7;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 40px auto;
-            background: #ffffff;
-            border-radius: 14px;
-            overflow: hidden;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-        }
-
-        .header {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-            padding: 22px;
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        .content {
-            padding: 30px;
-            color: #334155;
-        }
-
-        .title {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .error-box {
-            background: #fef2f2;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 20px 0;
-            border-left: 5px solid #ef4444;
-        }
-
-        .property-box {
-            background: #f8fafc;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 10px;
-            font-weight: 500;
-        }
-
-        .badge {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 6px 14px;
-            background: #ef4444;
-            color: white;
-            border-radius: 50px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 12px 20px;
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white !important;
-            text-decoration: none;
-            border-radius: 8px;
-            margin-top: 25px;
-            font-weight: 600;
-        }
-
-        .footer {
-            text-align: center;
-            font-size: 12px;
-            color: #94a3b8;
-            padding: 18px;
-            background: #f8fafc;
-        }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f1f5f9; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .header { background: #6366f1; color: white; padding: 30px; text-align: center; font-size: 24px; font-weight: bold; }
+        .content { padding: 30px; color: #334155; line-height: 1.6; }
+        .status-box { background: #fef2f2; padding: 20px; border-radius: 8px; border-left: 4px solid #ef4444; margin: 20px 0; }
+        .property-info { background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 10px; }
+        .badge { display: inline-block; padding: 4px 12px; background: #ef4444; color: white; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; margin-top: 8px; }
+        .footer { text-align: center; font-size: 12px; color: #94a3b8; padding: 25px; background: #f8fafc; border-top: 1px solid #e2e8f0; }
+        strong { color: #1e293b; }
     </style>
 </head>
-
 <body>
-
     <div class="container">
-
-        <div class="header">
-            RentalHub
-        </div>
-
+        <div class="header">RentalHub</div>
         <div class="content">
-
-            <div class="title">
-                Hello %s
+            <h2 style="margin-top:0;">Hello %s,</h2>
+            <div class="status-box">
+                <strong style="color: #991b1b;">Update:</strong> Your property submission was not approved at this time.
             </div>
-
-            <div class="error-box">
-                <strong>We're sorry!</strong> Your property submission was not approved.
-            </div>
-
-            <p>After reviewing your listing, we found that it does not meet our current requirements.</p>
-
-            <div class="property-box">
+            <div class="property-info">
                 <strong>Property:</strong> %s <br/>
-                <span class="badge">REJECTED</span>
+                <span class="badge">Rejected</span>
             </div>
-
-            <p>You may review the details, make necessary changes, and submit again.</p>
-
-            <p style="margin-top:20px;">
-                If you have any questions, feel free to contact our support team.
-            </p>
-
-            <p>
-                Thank you for choosing <strong>RentalHub</strong>.
-            </p>
-
+            <p>Please review your listing details to ensure they meet our quality guidelines. You can update the information and resubmit for approval anytime.</p>
         </div>
-
         <div class="footer">
             © 2026 RentalHub • Kanchanpur, Nepal <br/>
             Making renting simple & smart
         </div>
-
     </div>
-
 </body>
 </html>
 """.formatted(ownerName, propertyTitle);
@@ -285,90 +91,114 @@ public class MailTemplate {
 <head>
     <meta charset="UTF-8">
     <style>
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background-color: #eef2f7;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 40px auto;
-            background: #ffffff;
-            border-radius: 14px;
-            overflow: hidden;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-        }
-
-        .header {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-            padding: 22px;
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        .content {
-            padding: 30px;
-            color: #334155;
-            text-align: center;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 12px 20px;
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white !important;
-            text-decoration: none;
-            border-radius: 8px;
-            margin-top: 20px;
-            font-weight: 600;
-        }
-
-        .footer {
-            text-align: center;
-            font-size: 12px;
-            color: #94a3b8;
-            padding: 18px;
-            background: #f8fafc;
-        }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f1f5f9; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .header { background: #6366f1; color: white; padding: 30px; text-align: center; font-size: 24px; font-weight: bold; }
+        .content { padding: 40px 30px; color: #334155; line-height: 1.6; text-align: center; }
+        .btn { display: inline-block; padding: 14px 28px; background: #6366f1; color: #ffffff !important; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 25px 0; box-shadow: 0 4px 6px rgba(99, 102, 241, 0.2); }
+        .footer { text-align: center; font-size: 12px; color: #94a3b8; padding: 25px; background: #f8fafc; border-top: 1px solid #e2e8f0; }
     </style>
 </head>
-
 <body>
-
     <div class="container">
-
-        <div class="header">
-            RentalHub Password Reset
-        </div>
-
+        <div class="header">RentalHub</div>
         <div class="content">
-
-            <h2>Hello %s,</h2>
-
-            <p>You requested to reset your password.</p>
-
-            <p>Click the button below to reset your password:</p>
-
+            <h2 style="margin-top:0;">Hello %s,</h2>
+            <p>We received a request to reset your password. If you didn't make this request, you can safely ignore this email.</p>
             <a href="%s" class="btn">Reset Password</a>
-
-            <p style="margin-top:20px;">
-                If you did not request this, please ignore this email.
-            </p>
-
+            <p style="font-size: 13px; color: #64748b;">This link will expire in 24 hours.</p>
         </div>
-
         <div class="footer">
-            © 2026 RentalHub
+            © 2026 RentalHub • Kanchanpur, Nepal <br/>
+            Making renting simple & smart
         </div>
-
     </div>
-
 </body>
 </html>
 """.formatted(name, resetLink);
+    }
+    public static String buildAcceptBookingTemplate(String tenantName, String ownerName, String propertyTitle) {
+        return """
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f1f5f9; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .header { background: #6366f1; color: white; padding: 30px; text-align: center; font-size: 24px; font-weight: bold; }
+        .content { padding: 30px; color: #334155; line-height: 1.6; }
+        .status-box { background: #f0fdf4; padding: 20px; border-radius: 8px; border-left: 4px solid #22c55e; margin: 20px 0; }
+        .property-info { background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 10px; }
+        .badge { display: inline-block; padding: 4px 12px; background: #22c55e; color: white; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; margin-top: 8px; }
+        .footer { text-align: center; font-size: 12px; color: #94a3b8; padding: 25px; background: #f8fafc; border-top: 1px solid #e2e8f0; }
+        strong { color: #1e293b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">RentalHub</div>
+        <div class="content">
+            <h2 style="margin-top:0;">Hello %s,</h2>
+            <div class="status-box">
+                <strong style="color: #166534;">Great News!</strong> Your booking request has been accepted by the owner.
+            </div>
+            <div class="property-info">
+                <strong>Property:</strong> %s <br/>
+                <strong>Owner:</strong> %s <br/>
+                <span class="badge">Booking Confirmed</span>
+            </div>
+            <p>You can now proceed with the next steps as outlined in your dashboard. Feel free to contact the owner if you have any specific questions about your move-in.</p>
+        </div>
+        <div class="footer">
+            © 2026 RentalHub • Kanchanpur, Nepal <br/>
+            Making renting simple & smart
+        </div>
+    </div>
+</body>
+</html>
+""".formatted(tenantName, propertyTitle, ownerName);
+    }
+    public static String buildRejectBookingTemplate(String tenantName, String ownerName, String propertyTitle) {
+        return """
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f1f5f9; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .header { background: #6366f1; color: white; padding: 30px; text-align: center; font-size: 24px; font-weight: bold; }
+        .content { padding: 30px; color: #334155; line-height: 1.6; }
+        .status-box { background: #fef2f2; padding: 20px; border-radius: 8px; border-left: 4px solid #ef4444; margin: 20px 0; }
+        .property-info { background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 10px; }
+        .badge { display: inline-block; padding: 4px 12px; background: #ef4444; color: white; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; margin-top: 8px; }
+        .footer { text-align: center; font-size: 12px; color: #94a3b8; padding: 25px; background: #f8fafc; border-top: 1px solid #e2e8f0; }
+        strong { color: #1e293b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">RentalHub</div>
+        <div class="content">
+            <h2 style="margin-top:0;">Hello %s,</h2>
+            <div class="status-box">
+                <strong style="color: #991b1b;">Booking Update:</strong> Your booking request for the property below was not accepted.
+            </div>
+            <div class="property-info">
+                <strong>Property:</strong> %s <br/>
+                <strong>Owner:</strong> %s <br/>
+                <span class="badge">Declined</span>
+            </div>
+            <p>Don't worry! There are many other great properties available on RentalHub. We recommend browsing similar listings in that area to find your next home.</p>
+        </div>
+        <div class="footer">
+            © 2026 RentalHub • Kanchanpur, Nepal <br/>
+            Making renting simple & smart
+        </div>
+    </div>
+</body>
+</html>
+""".formatted(tenantName, propertyTitle, ownerName);
     }
 }

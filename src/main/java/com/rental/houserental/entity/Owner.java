@@ -2,7 +2,6 @@ package com.rental.houserental.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.rental.houserental.enums.OwnerStatus;
 import com.rental.houserental.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -37,8 +36,6 @@ public class Owner {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Enumerated(EnumType.STRING)
-    private OwnerStatus status;
 
     @ManyToOne
     @JoinColumn(name = "admin_id")
@@ -50,4 +47,9 @@ public class Owner {
     @JsonBackReference
    private List<Property> properties;
 
+    private String citizenFrontPath;
+    private String citizenBackPath;
+    private String passportPhotoPath;
+
+    private boolean status=false;
 }

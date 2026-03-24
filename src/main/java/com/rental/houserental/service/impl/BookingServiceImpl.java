@@ -16,6 +16,8 @@ import java.util.List;
 public class BookingServiceImpl implements BookingService {
 
     @Autowired
+    private EmailService emailService;
+    @Autowired
     private BookingRepository bookingRepository;
 
     @Autowired
@@ -63,7 +65,7 @@ public class BookingServiceImpl implements BookingService {
         Property property = booking.getProperty();
         property.setBookingStatus(bookStatus);
         propertyRepository.save(property);
-
+        emailService.sendBookingAcceptMail(booking.getTenant().getFullName(),booking.getTenant().getEmail(),booking.getOwner().getFullName(),booking.getProperty().getTitle());
         booking.setStatus(BookingStatus.BOOKED);
         return bookingRepository.save(booking);
     }
@@ -75,7 +77,7 @@ public class BookingServiceImpl implements BookingService {
         Property property = booking.getProperty();
         property.setBookingStatus(BookingStatus.AVAILABLE);
         propertyRepository.save(property);
-
+        emailService.sendBookingRejectMail(booking.getTenant().getFullName(),booking.getTenant().getEmail(),booking.getOwner().getFullName(),booking.getProperty().getTitle());
         booking.setStatus(bookStatus);
         return bookingRepository.save(booking);
     }

@@ -16,9 +16,7 @@ public class PropertyResponseDto {
     private String municipality;
     private Integer wardNo;
     private String tole;
-    private String houseName;
     private String houseNo;
-    private String apartmentNo;
 
     private Integer bedrooms;
     private Integer bathrooms;
@@ -28,7 +26,8 @@ public class PropertyResponseDto {
     private Boolean parkingAvailable;
     private String imageUrl;
     private BookingStatus bookingStatus;
-    // Owner (only id & fullName)
     private Long ownerId;
     private String ownerName;
+    private String ownerPhone;
+    private String ownerEmail;
 }

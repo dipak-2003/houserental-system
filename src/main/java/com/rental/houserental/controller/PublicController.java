@@ -40,14 +40,10 @@ public class PublicController {
             dto.setMunicipality(p.getMunicipality());
             dto.setWardNo(p.getWardNo());
             dto.setTole(p.getTole());
-            dto.setHouseName(p.getHouseName());
             dto.setHouseNo(p.getHouseNo());
-            dto.setApartmentNo(p.getApartmentNo());
-
             dto.setBedrooms(p.getBedrooms());
             dto.setBathrooms(p.getBathrooms());
             dto.setArea(p.getArea());
-
             dto.setFurnished(p.isFurnished());
             dto.setParkingAvailable(p.isParkingAvailable());
             dto.setImageUrl(p.getImageUrl());
@@ -58,6 +54,7 @@ public class PublicController {
             if (p.getOwner() != null) {
                 dto.setOwnerId(p.getOwner().getId());
                 dto.setOwnerName(p.getOwner().getFullName());
+                dto.setOwnerEmail(p.getOwner().getEmail());
             }
 
             responseList.add(dto);
@@ -87,10 +84,7 @@ public class PublicController {
         dto.setMunicipality(p.getMunicipality());
         dto.setWardNo(p.getWardNo());
         dto.setTole(p.getTole());
-        dto.setHouseName(p.getHouseName());
         dto.setHouseNo(p.getHouseNo());
-        dto.setApartmentNo(p.getApartmentNo());
-
         dto.setBedrooms(p.getBedrooms());
         dto.setBathrooms(p.getBathrooms());
         dto.setArea(p.getArea());
@@ -105,6 +99,8 @@ public class PublicController {
         if (p.getOwner() != null) {
             dto.setOwnerId(p.getOwner().getId());
             dto.setOwnerName(p.getOwner().getFullName());
+            dto.setOwnerEmail(p.getOwner().getEmail());
+
         }
 
         return ResponseEntity.ok(dto);
