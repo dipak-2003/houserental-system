@@ -1,6 +1,5 @@
 package com.rental.houserental.repository;
 
-import com.rental.houserental.entity.Booking;
 import com.rental.houserental.entity.Owner;
 import com.rental.houserental.entity.Property;
 import com.rental.houserental.enums.BookingStatus;
@@ -38,7 +37,8 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
             "AND (:minArea IS NULL OR p.area >= :minArea) " +
             "AND (:maxArea IS NULL OR p.area <= :maxArea) " +
             "AND (:bedrooms IS NULL OR p.bedrooms = :bedrooms) " +
-            "AND (:typeFilter IS NULL OR LOWER(p.type) = LOWER(:typeFilter))")
+            "AND (:typeFilter IS NULL OR LOWER(p.type) = LOWER(:typeFilter)) " +
+            "AND p.status = com.rental.houserental.enums.PropertyStatus.APPROVED")
     List<Property> searchByKeywordAndFilters(
             @Param("keyword") String keyword,
             @Param("minPrice") Double minPrice,

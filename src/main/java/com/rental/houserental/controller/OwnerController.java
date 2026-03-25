@@ -114,7 +114,7 @@ public class OwnerController {
             property.setTole(propertyDto.getTole());
             property.setHouseNo(propertyDto.getHouseNo());
 
-            property.setBookingStatus(BookingStatus.AVAILABLE);
+            property.setBookingStatus(BookingStatus.NO_APPROVED);
             property.setStatus(
                     propertyDto.getStatus() != null
                             ? propertyDto.getStatus()

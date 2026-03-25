@@ -55,7 +55,7 @@ public class Property {
 
     // Availability
     @Enumerated(EnumType.STRING)
-    private BookingStatus bookingStatus=BookingStatus.AVAILABLE;
+    private BookingStatus bookingStatus=BookingStatus.PENDING;
 
     // Status (APPROVED, PENDING, CANCELLED)
     @Enumerated(EnumType.STRING)

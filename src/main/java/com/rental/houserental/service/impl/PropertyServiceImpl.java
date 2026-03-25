@@ -95,7 +95,7 @@ public class PropertyServiceImpl implements PropertyService {
                 .orElseThrow(()->new RuntimeException("Unauthorized user"));
         property.setAdmin(admin);
         property.setStatus(PropertyStatus.REJECTED);
-
+        property.setBookingStatus(BookingStatus.NO_APPROVED);
         Property saved= propertyRepository.save(property);
         String ownerEmail = saved.getOwner().getEmail();
         String propertyTitle = saved.getTitle();
