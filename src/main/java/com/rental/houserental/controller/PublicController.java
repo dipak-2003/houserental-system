@@ -1,15 +1,13 @@
 package com.rental.houserental.controller;
 
+import com.rental.houserental.algorithm.SortProperties;
 import com.rental.houserental.dto.PropertyResponseDto;
 import com.rental.houserental.entity.Property;
 import com.rental.houserental.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,11 +98,10 @@ public class PublicController {
             dto.setOwnerId(p.getOwner().getId());
             dto.setOwnerName(p.getOwner().getFullName());
             dto.setOwnerEmail(p.getOwner().getEmail());
-
         }
-
         return ResponseEntity.ok(dto);
     }
+
 
 
 

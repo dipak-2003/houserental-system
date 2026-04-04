@@ -239,7 +239,7 @@ public class OwnerController {
                 Files.createDirectories(uploadPath);
             }
 
-            // 👉 If new image is uploaded → replace old one
+            //If new image is uploaded → replace old one
             if (propertyDto.getImage() != null && !propertyDto.getImage().isEmpty()) {
 
                 // (Optional) delete old image
@@ -309,6 +309,16 @@ public class OwnerController {
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @GetMapping("/property/{id}")
+    public ResponseEntity<?> getPropertyById(@PathVariable Long id)
+    {
+        Property property=propertyRepository.findById(id).get();
+        if(property==null){
+            return null;
+        }
+        return new ResponseEntity<>(property,HttpStatus.OK);
     }
     }
 

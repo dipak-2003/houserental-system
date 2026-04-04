@@ -77,4 +77,18 @@ public class EmailService {
         }
     }
 
+    public void sendEmailOtp(String toEmail, String otp){
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(toEmail);
+            helper.setSubject("Verification OTP");
+            String htmlContent = MailTemplate.buildOtpEmailTemplate(otp);
+            helper.setText(htmlContent, true);
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

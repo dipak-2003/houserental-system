@@ -1,5 +1,4 @@
 package com.rental.houserental.repository;
-
 import com.rental.houserental.entity.Owner;
 import com.rental.houserental.entity.Property;
 import com.rental.houserental.enums.BookingStatus;
@@ -24,14 +23,14 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
     List<Property> findByBookingStatus(BookingStatus bookingStatus);
 
     @Query("SELECT p FROM Property p " +
-            "WHERE (:keyword IS NULL OR " +
-            "(LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-            " LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-            " LOWER(p.tole) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-            " LOWER(p.municipality) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-            " LOWER(p.district) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-            " LOWER(p.type) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-            " LOWER(p.houseName) LIKE LOWER(CONCAT('%', :keyword, '%')))) " +
+            "WHERE (:keyword IS NULL OR (" +
+            "LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(p.tole) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(p.municipality) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(p.district) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(p.type) LIKE LOWER(CONCAT('%', :keyword, '%'))" +
+            ")) " +
             "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
             "AND (:maxPrice IS NULL OR p.price <= :maxPrice) " +
             "AND (:minArea IS NULL OR p.area >= :minArea) " +

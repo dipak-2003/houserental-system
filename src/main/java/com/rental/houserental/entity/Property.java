@@ -39,7 +39,6 @@ public class Property {
     private String tole;
 
     // House/Apartment Info
-    private String houseName;
     private String houseNo;
     private String apartmentNo;
 

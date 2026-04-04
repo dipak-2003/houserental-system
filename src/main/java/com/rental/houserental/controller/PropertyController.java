@@ -1,5 +1,6 @@
 package com.rental.houserental.controller;
 
+import com.rental.houserental.algorithm.SortProperties;
 import com.rental.houserental.entity.Property;
 import com.rental.houserental.enums.BookingStatus;
 import com.rental.houserental.service.PropertyService;
@@ -24,9 +25,10 @@ public class PropertyController {
             @RequestParam(value = "maxPrice", required = false) Double maxPrice,
             @RequestParam(value = "minArea", required = false) Double minArea,
             @RequestParam(value = "maxArea", required = false) Double maxArea,
-            @RequestParam(value = "bedrooms", required = false) Integer bedrooms
+            @RequestParam(value = "bedrooms", required = false) Integer bedrooms,
+            @RequestParam(value = "order", required = false) String order,
+            @RequestParam(value = "basedOn", required = false) String basedOn
     ) {
-        // Call the service method with the updated parameters
         List<Property> properties = propertyService.searchProperty(
                 keyword,
                 type,
@@ -36,7 +38,30 @@ public class PropertyController {
                 maxArea,
                 bedrooms
         );
+        printFunction(keyword,type,minPrice,maxPrice,minArea,maxArea,bedrooms,order,basedOn);
+        List<Property> propertyList= SortProperties.QuickSort(properties,order,basedOn);
+        return ResponseEntity.ok(propertyList);
+    }
+    void printFunction(String key, String type, Double minprice, Double maxprice,
+                       Double minA, Double maxA, Integer bed,
+                       String order, String basedOn) {
 
-        return ResponseEntity.ok(properties);
+        System.out.println("===== FILTER / SORT PARAMETERS =====");
+
+        System.out.println("Search Key     : " + (key != null ? key : "N/A"));
+        System.out.println("Type           : " + (type != null ? type : "N/A"));
+
+        System.out.println("Min Price      : " + (minprice != null ? minprice : "N/A"));
+        System.out.println("Max Price      : " + (maxprice != null ? maxprice : "N/A"));
+
+        System.out.println("Min Area       : " + (minA != null ? minA : "N/A"));
+        System.out.println("Max Area       : " + (maxA != null ? maxA : "N/A"));
+
+        System.out.println("Bedrooms       : " + (bed != null ? bed : "N/A"));
+
+        System.out.println("Sort Order     : " + (order != null ? order : "N/A"));
+        System.out.println("Sort Based On  : " + (basedOn != null ? basedOn : "N/A"));
+
+        System.out.println("====================================");
     }
 }

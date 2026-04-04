@@ -27,12 +27,11 @@ public class PropertyServiceImpl implements PropertyService {
     public Property addProperty(Long ownerId, Property property) throws Exception {
         Owner owner = ownerRepository.findById(ownerId)
                 .orElseThrow(() -> new RuntimeException("Owner not found"));
-
         property.setOwner(owner);
         property.setStatus(PropertyStatus.PENDING);
         property.setBookingStatus(BookingStatus.AVAILABLE);
-
-        return propertyRepository.save(property);
+        Property property1=propertyRepository.save(property);
+        return property1;
     }
 
     @Override
