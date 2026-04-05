@@ -91,4 +91,18 @@ public class EmailService {
         }
     }
 
+    public void sendEmailVerifyToken(String toEmail, String otp){
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(toEmail);
+            helper.setSubject("Verify Email with Token");
+            String htmlContent = MailTemplate.buildEmailVerifyTemplate(otp);
+            helper.setText(htmlContent, true);
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

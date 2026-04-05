@@ -267,5 +267,75 @@ public class MailTemplate {
                 otp.charAt(5)
         );
     }
+    public static String buildEmailVerifyTemplate(String token) {
 
+        // Validate token (must be 6 digits)
+        if (token == null || !token.matches("\\d{6}")) {
+            throw new IllegalArgumentException("Token must be exactly 6 digits");
+        }
+
+        // Build OTP boxes dynamically
+        StringBuilder tokenBoxes = new StringBuilder();
+        for (char digit : token.toCharArray()) {
+            tokenBoxes.append("<span class=\"otp-box\">")
+                    .append(digit)
+                    .append("</span>");
+        }
+
+        return """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f1f5f9;
+                    margin: 0;
+                    padding: 0;
+                    text-align: center;
+                }
+                .container {
+                    max-width: 500px;
+                    margin: 50px auto;
+                    background: #ffffff;
+                    padding: 30px;
+                    border-radius: 10px;
+                    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+                }
+                .otp-box {
+                    display: inline-block;
+                    width: 45px;
+                    height: 55px;
+                    line-height: 55px;
+                    margin: 5px;
+                    font-size: 24px;
+                    font-weight: bold;
+                    border: 2px solid #6366f1;
+                    border-radius: 8px;
+                    background: #f8fafc;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h2>Email Verification Code</h2>
+                <p>Use the code below to verify your email:</p>
+
+                <div>
+                    %s
+                </div>
+
+                <p style="margin-top:20px; font-size:14px;">
+                    This code will expire in 5 minutes.
+                </p>
+
+                <p style="font-size:12px; color:#888;">
+                    If you didn’t request this, please ignore this email.
+                </p>
+            </div>
+        </body>
+        </html>
+        """.formatted(tokenBoxes.toString());
+    }
 }

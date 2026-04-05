@@ -7,10 +7,12 @@ import com.rental.houserental.dto.RegisterRequest;
 import com.rental.houserental.entity.Admin;
 import com.rental.houserental.entity.Owner;
 import com.rental.houserental.entity.Tenant;
+import com.rental.houserental.entity.Token;
 import com.rental.houserental.enums.Role;
 import com.rental.houserental.repository.AdminRepository;
 import com.rental.houserental.repository.OwnerRepository;
 import com.rental.houserental.repository.TenantRepository;
+import com.rental.houserental.repository.TokenRepository;
 import com.rental.houserental.service.impl.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +29,8 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+    @Autowired
+    private TokenRepository tokenRepository;
     @Autowired
     private EmailService emailService;
     @Autowired
@@ -58,16 +62,12 @@ public class AuthController {
     
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
-
         // Check duplicate email
         if (tenantRepository.findByEmail(request.getEmail()).isPresent() ||
                 adminRepository.findByEmail(request.getEmail()).isPresent() ||
                 ownerRepository.findByEmail(request.getEmail()).isPresent()) {
-
             return ResponseEntity.badRequest().body("Email already exists!");
         }
-
-        String encodedPassword = passwordEncoder.encode(request.getPassword());
 
         // ================= ADMIN AUTO CREATE =================
         if (adminRepository.findByEmail(adminEmail).isEmpty()) {
@@ -76,36 +76,22 @@ public class AuthController {
             admin.setEmail(adminEmail);
             admin.setPassword(passwordEncoder.encode(adminPassword));
             admin.setRole(Role.ADMIN);
-
             adminRepository.save(admin);
         }
-
-        // ================= OWNER REGISTER =================
-        if (request.getRole() == Role.OWNER) {
-            Owner owner = new Owner();
-            owner.setFullName(request.getFullName());
-            owner.setEmail(request.getEmail());
-            owner.setPassword(encodedPassword);
-            owner.setRole(Role.OWNER);
-
-            ownerRepository.save(owner);
-
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body("Owner Registered Successfully");
+        int otp = (int)(Math.random() * 900000) + 100000;
+        String token1 = String.valueOf(otp);
+        Token token=new Token();
+        token.setEmail(request.getEmail());
+        token.setRole(request.getRole());
+        token.setFullName(request.getFullName());
+        token.setPassword(request.getPassword());
+        token.setToken(token1);
+        tokenRepository.save(token);
+        System.out.println(token1);
+        emailService.sendEmailVerifyToken(request.getEmail(),token1);
+        return ResponseEntity.status(HttpStatus.CREATED).body(" Check your email and enter the token");
         }
 
-        // ================= TENANT REGISTER =================
-        Tenant tenant = new Tenant();
-        tenant.setFullName(request.getFullName());
-        tenant.setEmail(request.getEmail());
-        tenant.setPassword(encodedPassword);
-        tenant.setRole(Role.TENANT);
-
-        tenantRepository.save(tenant);
-
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body("Tenant Registered Successfully");
-    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
@@ -117,7 +103,8 @@ public class AuthController {
                             request.getPassword()
                     )
             );
-        } catch (BadCredentialsException e) {
+        }
+        catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Invalid Email or Password");
         }
@@ -126,7 +113,6 @@ public class AuthController {
         String fullName = null;
         String role = null;
         String authEmail=null;
-
         String email = request.getEmail();
 
         // Check Admin
@@ -179,14 +165,11 @@ public class AuthController {
     public ResponseEntity<String> forgetPassword(@RequestBody Map<String, String> request) {
 
         String email = request.get("email");
-
         Optional<Admin> adminOpt = adminRepository.findByEmail(email);
         Optional<Tenant> tenantOpt = tenantRepository.findByEmail(email);
         Optional<Owner> ownerOpt = ownerRepository.findByEmail(email);
-
         SecureRandom random = new SecureRandom();
         String token = String.format("%06d", random.nextInt(1000000));
-
         if (ownerOpt.isPresent()) {
             Owner owner = ownerOpt.get();
             owner.setResetToken(token);
@@ -210,9 +193,9 @@ public class AuthController {
             emailService.sendResetMail(tenant.getFullName(), tenant.getEmail(), token);
             return ResponseEntity.ok("Reset link sent to tenant");
         }
-
         return ResponseEntity.badRequest().body("Email not found");
     }
+
     @PutMapping("/reset")
     public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
 
@@ -246,6 +229,35 @@ public class AuthController {
         return new ResponseEntity<>("Invalid token", HttpStatus.BAD_REQUEST);
     }
 
+
+    @PutMapping("/verify-email/{token}")
+    public ResponseEntity<?> verifyEmailToken(@PathVariable String token){
+
+      Token token1=tokenRepository.findByToken(token).get();
+      if(token==null){
+          return new ResponseEntity<>("Invalid email token",HttpStatus.BAD_REQUEST);
+      }
+      String password=passwordEncoder.encode(token1.getPassword());
+      if(token1.getRole()==Role.OWNER){
+          Owner owner=new Owner();
+          owner.setEmail(token1.getEmail());
+          owner.setPassword(password);
+          owner.setRole(Role.OWNER);
+          owner.setFullName(token1.getFullName());
+          System.out.println(owner);
+          ownerRepository.save(owner);
+          return ResponseEntity.ok("Owner register successfully!");
+      }
+
+      Tenant tenant=new Tenant();
+      tenant.setEmail(token1.getEmail());
+      tenant.setFullName(token1.getFullName());
+      tenant.setRole(Role.TENANT);
+      tenant.setPassword(password);
+      tenantRepository.save(tenant);
+      return new ResponseEntity<>("Tenant register successfully!",HttpStatus.OK);
+
+    }
 
 
 }
