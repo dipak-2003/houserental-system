@@ -28,7 +28,7 @@ public class ReviewMapper {
                 .furnished(property.isFurnished())
                 .parkingAvailable(property.isParkingAvailable())
 
-                .imageUrl(property.getImageUrl())
+                .imageUrl(property.getImages())
                 .bookingStatus(property.getBookingStatus().name())
                 .status(property.getStatus().name())
 

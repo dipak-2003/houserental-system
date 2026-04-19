@@ -44,7 +44,7 @@ public class PublicController {
             dto.setArea(p.getArea());
             dto.setFurnished(p.isFurnished());
             dto.setParkingAvailable(p.isParkingAvailable());
-            dto.setImageUrl(p.getImageUrl());
+            dto.setImageUrl(p.getImages());
 
             dto.setBookingStatus(p.getBookingStatus());
 
@@ -89,7 +89,7 @@ public class PublicController {
 
         dto.setFurnished(p.isFurnished());
         dto.setParkingAvailable(p.isParkingAvailable());
-        dto.setImageUrl(p.getImageUrl());
+        dto.setImageUrl(p.getImages());
 
         dto.setBookingStatus(p.getBookingStatus());
 

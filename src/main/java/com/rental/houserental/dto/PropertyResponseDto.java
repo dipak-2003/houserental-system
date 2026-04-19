@@ -3,6 +3,8 @@ package com.rental.houserental.dto;
 import com.rental.houserental.enums.BookingStatus;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class PropertyResponseDto {
 
@@ -24,7 +26,7 @@ public class PropertyResponseDto {
 
     private Boolean furnished;
     private Boolean parkingAvailable;
-    private String imageUrl;
+    private List<String> imageUrl;
     private BookingStatus bookingStatus;
     private Long ownerId;
     private String ownerName;

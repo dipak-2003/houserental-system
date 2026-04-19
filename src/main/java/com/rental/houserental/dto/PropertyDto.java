@@ -28,8 +28,7 @@ public class PropertyDto {
     private Boolean furnished;
     private Boolean parkingAvailable;
 
-    // ✅ SINGLE IMAGE
-    private MultipartFile image;
+    private List<MultipartFile> image; // multiple files
 
     // DOCUMENTS
     private MultipartFile citizenFront;

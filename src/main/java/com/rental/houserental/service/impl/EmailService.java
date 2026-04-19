@@ -54,7 +54,7 @@ public class EmailService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setTo(toEmail);
-            helper.setSubject("Reset Your password");
+            helper.setSubject("Booking Request Accepted");
             String htmlContent = MailTemplate.buildAcceptBookingTemplate(tenantName, ownerName, propertyTitle);
             helper.setText(htmlContent, true);
             mailSender.send(message);
@@ -68,7 +68,7 @@ public class EmailService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setTo(toEmail);
-            helper.setSubject("Reset Your password");
+            helper.setSubject("Booking request rejected");
             String htmlContent = MailTemplate.buildRejectBookingTemplate(tenantName, ownerName, propertyTitle);
             helper.setText(htmlContent, true);
             mailSender.send(message);

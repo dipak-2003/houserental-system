@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "properties")
@@ -49,8 +51,10 @@ public class Property {
     private boolean furnished;
     private boolean parkingAvailable;
 
-    // Images
-    private String imageUrl;           // store comma-separated URLs if multiple
+    @ElementCollection
+    @CollectionTable(name = "property_images", joinColumns = @JoinColumn(name = "property_id"))
+    @Column(name = "image_url")
+    private List<String> images = new ArrayList<>();        // store comma-separated URLs if multiple
 
     // Availability
     @Enumerated(EnumType.STRING)

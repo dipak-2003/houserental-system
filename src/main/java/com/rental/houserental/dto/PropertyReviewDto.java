@@ -2,6 +2,7 @@ package com.rental.houserental.dto;
 
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -31,7 +32,7 @@ public class PropertyReviewDto {
     private Boolean furnished;
     private Boolean parkingAvailable;
 
-    private String imageUrl;
+    private List<String> imageUrl;
 
     private String bookingStatus;
     private String status;

@@ -283,59 +283,158 @@ public class MailTemplate {
         }
 
         return """
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="UTF-8">
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    background-color: #f1f5f9;
-                    margin: 0;
-                    padding: 0;
-                    text-align: center;
-                }
-                .container {
-                    max-width: 500px;
-                    margin: 50px auto;
-                    background: #ffffff;
-                    padding: 30px;
-                    border-radius: 10px;
-                    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-                }
-                .otp-box {
-                    display: inline-block;
-                    width: 45px;
-                    height: 55px;
-                    line-height: 55px;
-                    margin: 5px;
-                    font-size: 24px;
-                    font-weight: bold;
-                    border: 2px solid #6366f1;
-                    border-radius: 8px;
-                    background: #f8fafc;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <h2>Email Verification Code</h2>
-                <p>Use the code below to verify your email:</p>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f1f5f9;
+            margin: 0;
+            padding: 0;
+        }
 
-                <div>
-                    %s
-                </div>
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
 
-                <p style="margin-top:20px; font-size:14px;">
-                    This code will expire in 5 minutes.
-                </p>
+        .header {
+            background: #6366f1;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
 
-                <p style="font-size:12px; color:#888;">
-                    If you didn’t request this, please ignore this email.
-                </p>
+        .content {
+            padding: 30px;
+            color: #334155;
+            line-height: 1.6;
+        }
+
+        .verify-box {
+            background: #eef2ff;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #6366f1;
+            margin: 20px 0;
+        }
+
+        .otp-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .otp-box {
+            display: inline-block;
+            width: 48px;
+            height: 58px;
+            line-height: 58px;
+            margin: 6px;
+            font-size: 26px;
+            font-weight: bold;
+            border-radius: 10px;
+            background: #f8fafc;
+            border: 2px solid #6366f1;
+            color: #111827;
+        }
+
+        .code-text {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 4px;
+            color: #6366f1;
+            margin-top: 10px;
+        }
+
+        .info-box {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #6366f1;
+            color: white;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 8px;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #94a3b8;
+            padding: 25px;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        strong {
+            color: #1e293b;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <div class="header">
+            RentalHub
+        </div>
+
+        <div class="content">
+
+            <h2 style="margin-top:0;">Email Verification</h2>
+
+            <div class="verify-box">
+                <strong>Action Required:</strong> Please use the verification code below to confirm your email address.
             </div>
-        </body>
-        </html>
-        """.formatted(tokenBoxes.toString());
+
+            <div class="otp-container">
+                %s
+            </div>
+
+            <div class="code-text">
+                %s
+            </div>
+
+            <div class="info-box">
+                This code will expire in <strong>5 minutes</strong>.<br/>
+                <span class="badge">Secure Code</span>
+            </div>
+
+            <p style="margin-top:20px;">
+                If you didn’t request this, you can safely ignore this email.
+            </p>
+
+        </div>
+
+        <div class="footer">
+            © 2026 RentalHub • Kanchanpur, Nepal <br/>
+            Making renting simple & smart
+        </div>
+
+    </div>
+
+</body>
+</html>
+""".formatted(tokenBoxes.toString(), token);
     }
 }

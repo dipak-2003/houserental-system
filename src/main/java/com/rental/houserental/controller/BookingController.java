@@ -3,7 +3,10 @@ package com.rental.houserental.controller;
 import com.rental.houserental.dto.BookedDetail;
 import com.rental.houserental.dto.LoggedUser;
 import com.rental.houserental.entity.Booking;
+import com.rental.houserental.entity.Property;
 import com.rental.houserental.enums.BookingStatus;
+import com.rental.houserental.repository.BookingRepository;
+import com.rental.houserental.repository.PropertyRepository;
 import com.rental.houserental.service.BookingService;
 import com.rental.houserental.service.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +24,11 @@ public class BookingController {
     private CustomUserDetails userDetailsService;
     @Autowired
     private BookingService bookingService;
+    @Autowired
+    private PropertyRepository propertyRepository;
 
+    @Autowired
+    private BookingRepository bookingRepository;
     @PostMapping("/createBook/{id}")
     public ResponseEntity<?> bookProperty(@PathVariable Long id,
                                           @RequestBody BookedDetail bookedDetail,
@@ -95,5 +102,16 @@ public class BookingController {
         }
         return new ResponseEntity<List<Booking>>(bookings, HttpStatus.OK);
 
+    }
+    @DeleteMapping("booking-released/{id}")
+    public ResponseEntity<?> releaseFreeProperty(@PathVariable Long id)
+    {
+       Booking booking= bookingRepository.findById(id).get();
+       if (booking==null){return new ResponseEntity<String>("Property not Booked!",HttpStatus.OK);}
+      Property property= propertyRepository.findById(booking.getProperty().getId()).get();
+       property.setBookingStatus(BookingStatus.AVAILABLE);
+       propertyRepository.save(property);
+       bookingRepository.delete(booking);
+       return new ResponseEntity<String>("Property has been released successfully!",HttpStatus.OK);
     }
 }
