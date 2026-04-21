@@ -1,18 +1,34 @@
 package com.rental.houserental.entity;
 
+import com.rental.houserental.enums.Role;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
+@Table(name = "notifications")
+@Data
 @AllArgsConstructor
-@Table(name="Notifications")
+@NoArgsConstructor
 public class Notification {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String notifications;
+    @Column(length = 1000)
+    private String message;
+
+    private Long userId;
+
+
+    @Enumerated(EnumType.STRING)
+    private Role role; // TENANT / OWNER / ADMIN
+
+    private boolean isRead = false;
+    private String title;
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

@@ -1,12 +1,15 @@
 package com.rental.houserental.service.impl;
 
 import com.rental.houserental.dto.BookedDetail;
+import com.rental.houserental.dto.Notice;
 import com.rental.houserental.entity.*;
 import com.rental.houserental.enums.BookingStatus;
+import com.rental.houserental.enums.Role;
 import com.rental.houserental.repository.BookingRepository;
 import com.rental.houserental.repository.PropertyRepository;
 import com.rental.houserental.repository.TenantRepository;
 import com.rental.houserental.service.BookingService;
+import com.rental.houserental.service.NotificationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +20,10 @@ public class BookingServiceImpl implements BookingService {
 
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private NotificationService notificationService;
+    @Autowired
+    private NotificationProvider notificationProvider;
     @Autowired
     private BookingRepository bookingRepository;
 
@@ -43,6 +50,21 @@ public class BookingServiceImpl implements BookingService {
         propertyRepository.save(property);
         booking.setPhone(bookedDetail.getPhone());
         booking.setAddress(bookedDetail.getAddress());
+        Notice notice=notificationProvider.tenantWarning();
+        Notification notification=new Notification();
+        notification.setMessage(notice.getMessage());
+        notification.setTitle(notice.getTitle());
+        notification.setRole(Role.TENANT);
+        notification.setUserId(tenantId);
+        notificationService.create(notification);
+
+        Notice notice1=notificationProvider.ownerBookingRequest();
+        Notification notification1=new Notification();
+        notification1.setMessage(notice1.getMessage());
+        notification1.setTitle(notice1.getTitle());
+        notification1.setRole(Role.OWNER);
+        notification1.setUserId(property.getOwner().getId());
+        notificationService.create(notification1);
 
         return bookingRepository.save(booking);
     }
@@ -67,6 +89,13 @@ public class BookingServiceImpl implements BookingService {
         propertyRepository.save(property);
         emailService.sendBookingAcceptMail(booking.getTenant().getFullName(),booking.getTenant().getEmail(),booking.getOwner().getFullName(),booking.getProperty().getTitle());
         booking.setStatus(BookingStatus.BOOKED);
+        Notice notice=notificationProvider.tenantBookingAccepted();
+        Notification notification=new Notification();
+        notification.setMessage(notice.getMessage());
+        notification.setTitle(notice.getTitle());
+        notification.setRole(Role.TENANT);
+        notification.setUserId(booking.getTenant().getId());
+        notificationService.create(notification);
         return bookingRepository.save(booking);
     }
 
@@ -79,6 +108,13 @@ public class BookingServiceImpl implements BookingService {
         propertyRepository.save(property);
         emailService.sendBookingRejectMail(booking.getTenant().getFullName(),booking.getTenant().getEmail(),booking.getOwner().getFullName(),booking.getProperty().getTitle());
         booking.setStatus(bookStatus);
+        Notice notice=notificationProvider.tenantBookingRejected();
+        Notification notification=new Notification();
+        notification.setMessage(notice.getMessage());
+        notification.setTitle(notice.getTitle());
+        notification.setRole(Role.TENANT);
+        notification.setUserId(booking.getTenant().getId());
+        notificationService.create(notification);
         return bookingRepository.save(booking);
     }
 

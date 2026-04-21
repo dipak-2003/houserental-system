@@ -3,17 +3,17 @@ package com.rental.houserental.controller;
 import com.rental.houserental.config.JwtUtil;
 import com.rental.houserental.dto.AuthResponse;
 import com.rental.houserental.dto.LoginRequest;
+import com.rental.houserental.dto.Notice;
 import com.rental.houserental.dto.RegisterRequest;
-import com.rental.houserental.entity.Admin;
-import com.rental.houserental.entity.Owner;
-import com.rental.houserental.entity.Tenant;
-import com.rental.houserental.entity.Token;
+import com.rental.houserental.entity.*;
 import com.rental.houserental.enums.Role;
 import com.rental.houserental.repository.AdminRepository;
 import com.rental.houserental.repository.OwnerRepository;
 import com.rental.houserental.repository.TenantRepository;
 import com.rental.houserental.repository.TokenRepository;
+import com.rental.houserental.service.NotificationProvider;
 import com.rental.houserental.service.impl.EmailService;
+import com.rental.houserental.service.impl.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -23,12 +23,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.SecureRandom;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+    @Autowired
+    private NotificationService notificationService;
+    @Autowired
+    private NotificationProvider notificationProvider;
     @Autowired
     private TokenRepository tokenRepository;
     @Autowired
@@ -237,6 +242,7 @@ public class AuthController {
       if(token==null){
           return new ResponseEntity<>("Invalid email token",HttpStatus.BAD_REQUEST);
       }
+
       String password=passwordEncoder.encode(token1.getPassword());
       if(token1.getRole()==Role.OWNER){
           Owner owner=new Owner();
@@ -249,12 +255,23 @@ public class AuthController {
           return ResponseEntity.ok("Owner register successfully!");
       }
 
+
       Tenant tenant=new Tenant();
       tenant.setEmail(token1.getEmail());
       tenant.setFullName(token1.getFullName());
       tenant.setRole(Role.TENANT);
       tenant.setPassword(password);
       tenantRepository.save(tenant);
+      List<Admin> admins = adminRepository.findAll();
+      Notice notice=notificationProvider.adminNewCustomer();
+      for (Admin admin:admins) {
+          Notification notification = new Notification();
+          notification.setMessage(notice.getMessage());
+          notification.setTitle(notice.getTitle());
+          notification.setRole(Role.ADMIN);
+          notification.setUserId(admin.getId());
+          notificationService.create(notification);
+      }
       return new ResponseEntity<>("Tenant register successfully!",HttpStatus.OK);
 
     }

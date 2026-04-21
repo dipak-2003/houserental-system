@@ -1,12 +1,16 @@
 package com.rental.houserental.service.impl;
+import com.rental.houserental.dto.Notice;
 import com.rental.houserental.entity.Admin;
+import com.rental.houserental.entity.Notification;
 import com.rental.houserental.entity.Owner;
 import com.rental.houserental.entity.Property;
 import com.rental.houserental.enums.BookingStatus;
 import com.rental.houserental.enums.PropertyStatus;
+import com.rental.houserental.enums.Role;
 import com.rental.houserental.repository.AdminRepository;
 import com.rental.houserental.repository.OwnerRepository;
 import com.rental.houserental.repository.PropertyRepository;
+import com.rental.houserental.service.NotificationProvider;
 import com.rental.houserental.service.PropertyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +26,10 @@ public class PropertyServiceImpl implements PropertyService {
     private final OwnerRepository ownerRepository;
     @Autowired
     private AdminRepository adminRepository;
+    @Autowired
+    private NotificationService notificationService;
+    @Autowired
+    private NotificationProvider notificationProvider;
     // OWNER OPERATIONS
     @Override
     public Property addProperty(Long ownerId, Property property) throws Exception {
@@ -31,6 +39,13 @@ public class PropertyServiceImpl implements PropertyService {
         property.setStatus(PropertyStatus.PENDING);
         property.setBookingStatus(BookingStatus.AVAILABLE);
         Property property1=propertyRepository.save(property);
+        Notice notice=notificationProvider.adminNewProperty();
+        Notification notification=new Notification();
+        notification.setMessage(notice.getMessage());
+        notification.setTitle(notice.getTitle());
+        notification.setRole(Role.ADMIN);
+        notification.setUserId(property.getOwner().getId());
+        notificationService.create(notification);
         return property1;
     }
 

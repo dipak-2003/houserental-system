@@ -1,12 +1,16 @@
 package com.rental.houserental.controller;
 import com.rental.houserental.dto.LoggedUser;
+import com.rental.houserental.dto.Notice;
 import com.rental.houserental.dto.PropertyReviewDto;
 import com.rental.houserental.entity.*;
+import com.rental.houserental.enums.Role;
 import com.rental.houserental.mapper.ReviewMapper;
 import com.rental.houserental.repository.PropertyRepository;
 import com.rental.houserental.service.AdminService;
 import com.rental.houserental.service.CustomUserDetails;
+import com.rental.houserental.service.NotificationProvider;
 import com.rental.houserental.service.PropertyService;
+import com.rental.houserental.service.impl.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +21,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
+    @Autowired
+    private NotificationService notificationService;
+    @Autowired
+    private NotificationProvider notificationProvider;
 
     @Autowired
     private CustomUserDetails userDetailsService;
@@ -95,6 +103,14 @@ public class AdminController {
     @PathVariable Long id) throws Exception {
         LoggedUser loggedAdmin=userDetailsService.loadUserByToken(authHeader);
         Property property=propertyService.approveProperty(id,loggedAdmin.getId());
+
+        Notice notice=notificationProvider.ownerPropertyApproved();
+        Notification notification=new Notification();
+        notification.setMessage(notice.getMessage());
+        notification.setTitle(notice.getTitle());
+        notification.setRole(Role.OWNER);
+        notification.setUserId(property.getOwner().getId());
+        notificationService.create(notification);
          return new ResponseEntity<>(property,HttpStatus.OK);
         }
 
@@ -103,6 +119,13 @@ public class AdminController {
                                                    @PathVariable Long id) throws Exception {
         LoggedUser loggedAdmin=userDetailsService.loadUserByToken(authHeader);
         Property property=propertyService.rejectProperty(id,loggedAdmin.getId());
+        Notice notice=notificationProvider.ownerPropertyApproved();
+        Notification notification=new Notification();
+        notification.setMessage(notice.getMessage());
+        notification.setTitle(notice.getTitle());
+        notification.setRole(Role.OWNER);
+        notification.setUserId(property.getOwner().getId());
+        notificationService.create(notification);
         return new ResponseEntity<>(property,HttpStatus.OK);
     }
 

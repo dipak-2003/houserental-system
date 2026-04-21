@@ -2,13 +2,19 @@ package com.rental.houserental.controller;
 
 import com.rental.houserental.dto.BookedDetail;
 import com.rental.houserental.dto.LoggedUser;
+import com.rental.houserental.dto.Notice;
 import com.rental.houserental.entity.Booking;
+import com.rental.houserental.entity.Notification;
+import com.rental.houserental.entity.Owner;
 import com.rental.houserental.entity.Property;
 import com.rental.houserental.enums.BookingStatus;
+import com.rental.houserental.enums.Role;
 import com.rental.houserental.repository.BookingRepository;
+import com.rental.houserental.repository.OwnerRepository;
 import com.rental.houserental.repository.PropertyRepository;
 import com.rental.houserental.service.BookingService;
 import com.rental.houserental.service.CustomUserDetails;
+import com.rental.houserental.service.NotificationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +26,15 @@ import java.util.List;
 @RestController
 public class BookingController {
 
+
     @Autowired
     private CustomUserDetails userDetailsService;
     @Autowired
     private BookingService bookingService;
     @Autowired
     private PropertyRepository propertyRepository;
+    @Autowired
+    private OwnerRepository ownerRepository;
 
     @Autowired
     private BookingRepository bookingRepository;

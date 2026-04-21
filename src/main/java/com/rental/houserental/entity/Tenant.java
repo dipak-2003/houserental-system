@@ -38,4 +38,5 @@ public class Tenant {
     @JsonIgnore
     private Admin admin;
 
+
 }
