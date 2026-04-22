@@ -1,5 +1,6 @@
 package com.rental.houserental.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -29,13 +30,18 @@ public class Payment {
 
     private Long propertyId;
     private String propertyName;
+    private String payerName;
+    private String payTo;
 
-    @ManyToOne
-    @JoinColumn(name = "admin_id")
-    private Admin admin;
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
+    @JsonIgnore
     private Owner owner;
+
+    @ManyToOne
+    @JoinColumn(name = "admin_id")
+    @JsonIgnore
+    private Admin admin;
     private LocalDateTime createdAt = LocalDateTime.now();
 }

@@ -50,6 +50,7 @@ public class Property {
     private double area;               // in sq ft
     private boolean furnished;
     private boolean parkingAvailable;
+    private boolean payment_status=false;
 
     @ElementCollection
     @CollectionTable(name = "property_images", joinColumns = @JoinColumn(name = "property_id"))
@@ -92,6 +93,7 @@ public class Property {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
 
 
 
