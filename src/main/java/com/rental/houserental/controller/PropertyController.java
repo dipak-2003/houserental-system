@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/public")
@@ -19,6 +20,7 @@ public class PropertyController {
 
     @GetMapping("/search")
     public ResponseEntity<List<Property>> searchProperties(
+
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "type", required = false) String type,
             @RequestParam(value = "minPrice", required = false) Double minPrice,
@@ -29,6 +31,8 @@ public class PropertyController {
             @RequestParam(value = "order", required = false) String order,
             @RequestParam(value = "basedOn", required = false) String basedOn
     ) {
+
+        // Fetch properties from service
         List<Property> properties = propertyService.searchProperty(
                 keyword,
                 type,
@@ -38,8 +42,34 @@ public class PropertyController {
                 maxArea,
                 bedrooms
         );
-        printFunction(keyword,type,minPrice,maxPrice,minArea,maxArea,bedrooms,order,basedOn);
-        List<Property> propertyList= SortProperties.QuickSort(properties,order,basedOn);
+
+        // Print filter details
+        printFunction(
+                keyword,
+                type,
+                minPrice,
+                maxPrice,
+                minArea,
+                maxArea,
+                bedrooms,
+                order,
+                basedOn
+        );
+
+        // Filter only successful payment properties
+        List<Property> paidProperties = properties.stream()
+                .filter(Property::isPayment_status)
+                .collect(Collectors.toList());
+
+        // Sort filtered properties
+        List<Property> propertyList =
+                SortProperties.QuickSort(
+                        paidProperties,
+                        order,
+                        basedOn
+                );
+
+        // Return response
         return ResponseEntity.ok(propertyList);
     }
     void printFunction(String key, String type, Double minprice, Double maxprice,
@@ -52,7 +82,7 @@ public class PropertyController {
         System.out.println("Type           : " + (type != null ? type : "N/A"));
 
         System.out.println("Min Price      : " + (minprice != null ? minprice : "N/A"));
-        System.out.println("Max Price      : " + (maxprice != null ? maxprice : "N/A"));
+        System.out.println("Max Price      : " + (maxprice !=null ? maxprice : "N/A"));
 
         System.out.println("Min Area       : " + (minA != null ? minA : "N/A"));
         System.out.println("Max Area       : " + (maxA != null ? maxA : "N/A"));

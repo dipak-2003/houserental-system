@@ -111,6 +111,16 @@ public class AdminController {
         notification.setRole(Role.OWNER);
         notification.setUserId(property.getOwner().getId());
         notificationService.create(notification);
+
+        Notice notice1=notificationProvider.ownerPaymentWarning();
+        Notification notification1=new Notification();
+        notification1.setMessage(notice1.getMessage());
+        notification1.setTitle(notice1.getTitle());
+        notification1.setRole(Role.OWNER);
+        notification1.setUserId(property.getOwner().getId());
+        notificationService.create(notification1);
+
+
          return new ResponseEntity<>(property,HttpStatus.OK);
         }
 
@@ -119,7 +129,7 @@ public class AdminController {
                                                    @PathVariable Long id) throws Exception {
         LoggedUser loggedAdmin=userDetailsService.loadUserByToken(authHeader);
         Property property=propertyService.rejectProperty(id,loggedAdmin.getId());
-        Notice notice=notificationProvider.ownerPropertyApproved();
+        Notice notice=notificationProvider.ownerPropertyRejected();
         Notification notification=new Notification();
         notification.setMessage(notice.getMessage());
         notification.setTitle(notice.getTitle());

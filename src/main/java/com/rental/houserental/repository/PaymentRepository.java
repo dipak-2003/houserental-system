@@ -12,7 +12,7 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     //Find payment by transaction ID (pid)
     Optional<Payment> findByTransactionId(String transactionId);
     List<Payment> findByOwner_Id(Long id);
-    long countByOwner_Id(Long ownerId);
+    List<Payment> findByAdmin_Id(Long id);
 
 
 }

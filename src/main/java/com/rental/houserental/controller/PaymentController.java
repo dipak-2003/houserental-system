@@ -2,14 +2,19 @@ package com.rental.houserental.controller;
 
 import com.rental.houserental.config.EsewaSignatureUtil;
 import com.rental.houserental.dto.LoggedUser;
+import com.rental.houserental.dto.Notice;
 import com.rental.houserental.entity.Admin;
+import com.rental.houserental.entity.Notification;
 import com.rental.houserental.entity.Payment;
 import com.rental.houserental.entity.Property;
+import com.rental.houserental.enums.Role;
 import com.rental.houserental.mapper.PaymentCalculator;
 import com.rental.houserental.repository.AdminRepository;
 import com.rental.houserental.repository.PaymentRepository;
 import com.rental.houserental.repository.PropertyRepository;
 import com.rental.houserental.service.CustomUserDetails;
+import com.rental.houserental.service.NotificationProvider;
+import com.rental.houserental.service.impl.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -24,12 +29,15 @@ public class PaymentController {
     @Autowired
     private CustomUserDetails customUserDetails;
 
-
+    @Autowired
+    private NotificationService notificationService;
     @Autowired
     private AdminRepository adminRepository;
     @Autowired
     private PaymentRepository paymentRepository;
 
+    @Autowired
+    private NotificationProvider notificationProvider;
     @Autowired
     private PropertyRepository propertyRepository;
 
@@ -130,6 +138,23 @@ public class PaymentController {
             property.setPayment_status(true);
             propertyRepository.save(property);
 
+            Notice notice=notificationProvider.ownerPaymentSuccess();
+            Notification notification=new Notification();
+            notification.setMessage(notice.getMessage());
+            notification.setTitle(notice.getTitle());
+            notification.setRole(Role.OWNER);
+            notification.setUserId(property.getOwner().getId());
+            notificationService.create(notification);
+
+            Notice notice1=notificationProvider.adminPaymentSuccess();
+            Notification notification1=new Notification();
+            notification1.setMessage(notice1.getMessage());
+            notification1.setTitle(notice1.getTitle());
+            notification1.setRole(Role.ADMIN);
+            notification1.setUserId(adminRepository.findByEmail(adminEmail).get().getId());
+            notificationService.create(notification1);
+
+
             res.put("message", "Payment SUCCESS");
             res.put("status", "SUCCESS");
 
@@ -159,7 +184,7 @@ public class PaymentController {
         }
 
         Payment payment = optionalPayment.get();
-
+       Property property= propertyRepository.findById(payment.getPropertyId()).get();
         // Optional: prevent overwriting SUCCESS payment
         if ("SUCCESS".equalsIgnoreCase(payment.getStatus())) {
             res.put("message", "Payment already marked as SUCCESS");
@@ -169,6 +194,13 @@ public class PaymentController {
 
         payment.setStatus("FAILED");
         paymentRepository.save(payment);
+        Notice notice=notificationProvider.ownerPaymentFailed();
+        Notification notification=new Notification();
+        notification.setMessage(notice.getMessage());
+        notification.setTitle(notice.getTitle());
+        notification.setRole(Role.OWNER);
+        notification.setUserId(property.getOwner().getId());
+        notificationService.create(notification);
 
         res.put("message", "Payment FAILED");
         res.put("status", "FAILED");
