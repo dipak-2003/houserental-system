@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 public class PaymentCalculator {
 
     // Inject value from application.properties
-    private double charge=2;
+    private double charge=10;
     // Calculate charge percentage
     public double calculation(double amount){
         return (amount * charge) / 100;
