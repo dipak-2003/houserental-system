@@ -71,13 +71,13 @@ public class PaymentController {
 
         // Calculate amount
         double amount = paymentCalculator.calculation(property.getPrice());
-        double tax = 0.0;
+        double tax = 10.0;
         double totalAmount = amount + tax;
 
         // Format values for eSewa
         String totalAmountStr = String.format("%.0f", totalAmount);
         String amountStr = String.format("%.0f", amount);
-        String taxStr = "0";
+        String taxStr =  String.format("%.0f", tax);
 
         // Save payment in database
         Payment payment = new Payment();
