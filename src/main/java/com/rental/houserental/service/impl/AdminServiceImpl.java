@@ -34,12 +34,11 @@ public class AdminServiceImpl implements AdminService {
     public DashboardDto getDashboardDetails() throws Exception {
         DashboardDto dashboardDto=new DashboardDto();
         dashboardDto.setTotalTenants(tenantRepository.count());
-        dashboardDto.setTotalBookings(bookingRepository.count());
         dashboardDto.setTotalOwners(ownerRepository.count());
         dashboardDto.setTotalBookings(bookingRepository.countByStatus(BookingStatus.BOOKED));
         dashboardDto.setBookedProperties(bookingRepository.countByStatus(BookingStatus.BOOKED));
         dashboardDto.setAvailableProperties(propertyRepository.countByBookingStatus(BookingStatus.AVAILABLE));
-        dashboardDto.setTotalProperties(propertyRepository.count());
+        dashboardDto.setTotalProperties(propertyRepository.count()-propertyRepository.countByStatus(REJECTED));
       return dashboardDto;
     }
 

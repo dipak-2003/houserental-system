@@ -12,9 +12,11 @@ import com.rental.houserental.enums.Role;
 import com.rental.houserental.repository.BookingRepository;
 import com.rental.houserental.repository.OwnerRepository;
 import com.rental.houserental.repository.PropertyRepository;
+import com.rental.houserental.repository.TenantRepository;
 import com.rental.houserental.service.BookingService;
 import com.rental.houserental.service.CustomUserDetails;
 import com.rental.houserental.service.NotificationProvider;
+import com.rental.houserental.service.impl.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +38,7 @@ public class BookingController {
     @Autowired
     private OwnerRepository ownerRepository;
 
+
     @Autowired
     private BookingRepository bookingRepository;
     @PostMapping("/createBook/{id}")
@@ -44,6 +47,7 @@ public class BookingController {
                                           @RequestHeader("Authorization") String authHeader) throws Exception {
         LoggedUser user = userDetailsService.loadUserByToken(authHeader);
         Booking booking = bookingService.bookProperty(id, user.getId(),bookedDetail);
+
         return new ResponseEntity<Booking>(booking, HttpStatus.OK);
     }
 

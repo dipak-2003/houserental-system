@@ -1,11 +1,7 @@
 package com.rental.houserental.entity;
-
 import jakarta.persistence.*;
 import lombok.Data;
-
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @Entity
@@ -20,13 +16,29 @@ public class Agreement {
     private String ownerName;
     private String adminName;
 
-    @ElementCollection
-    @CollectionTable(
-            name = "agreement_terms",
-            joinColumns = @JoinColumn(name = "agreement_id")
-    )
-    @Column(name = "term")
-    private List<String> termsAndConditions = new ArrayList<>();
+    @Column(length= 1000)
+    private String list1;
+    @Column(length= 500)
+    private String list2;
+    @Column(length= 500)
+    private String list3;
+    @Column(length= 500)
+    private String list4;
+    @Column(length= 500)
+    private String list5;
+    @Column(length= 500)
+    private String list6;
+    @Column(length= 500)
+    private String list7;
+    @Column(length= 500)
+    private String list8;
+    @Column(length= 500)
+    private String list9;
+    @Column(length= 500)
+    private String list10;
+
+    private boolean isOwnerSign=false;
+    private boolean isAdminSign=false;
 
     private LocalDateTime acceptedAt;
 }

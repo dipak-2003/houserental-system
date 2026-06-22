@@ -6,4 +6,5 @@ import lombok.Data;
 public class BookedDetail {
     private String address;
     private String phone;
+    private int rentTime;
 }

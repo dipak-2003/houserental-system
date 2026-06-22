@@ -50,6 +50,7 @@ public class BookingServiceImpl implements BookingService {
         propertyRepository.save(property);
         booking.setPhone(bookedDetail.getPhone());
         booking.setAddress(bookedDetail.getAddress());
+        booking.setRentTime(bookedDetail.getRentTime());
         Notice notice=notificationProvider.tenantWarning();
         Notification notification=new Notification();
         notification.setMessage(notice.getMessage());
@@ -65,6 +66,8 @@ public class BookingServiceImpl implements BookingService {
         notification1.setRole(Role.OWNER);
         notification1.setUserId(property.getOwner().getId());
         notificationService.create(notification1);
+
+        emailService.sendBookingRequestSuccessMail(tenant.getFullName(),tenant.getEmail(),owner.getFullName(),property.getTitle(),owner.getPhone());
 
         return bookingRepository.save(booking);
     }

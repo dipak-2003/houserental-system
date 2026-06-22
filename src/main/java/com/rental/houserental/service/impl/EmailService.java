@@ -4,7 +4,6 @@ import com.rental.houserental.template.MailTemplate;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -77,19 +76,7 @@ public class EmailService {
         }
     }
 
-    public void sendEmailOtp(String toEmail, String otp){
-        try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true);
-            helper.setTo(toEmail);
-            helper.setSubject("Verification OTP");
-            String htmlContent = MailTemplate.buildOtpEmailTemplate(otp);
-            helper.setText(htmlContent, true);
-            mailSender.send(message);
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
-    }
+
 
     public void sendEmailVerifyToken(String toEmail, String otp){
         try {
@@ -98,6 +85,21 @@ public class EmailService {
             helper.setTo(toEmail);
             helper.setSubject("Verify Email with Token");
             String htmlContent = MailTemplate.buildEmailVerifyTemplate(otp);
+            helper.setText(htmlContent, true);
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void sendBookingRequestSuccessMail(String tenantName, String toEmail, String ownerName, String propertyTitle, String phoneNo) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(toEmail);
+            helper.setSubject("Booking requested successfully");
+            String htmlContent = MailTemplate.buildBookingRequestSuccessTemplate(tenantName, ownerName, propertyTitle,phoneNo);
             helper.setText(htmlContent, true);
             mailSender.send(message);
         } catch (MessagingException e) {

@@ -1,6 +1,117 @@
 package com.rental.houserental.template;
 
 public class MailTemplate {
+    public static String buildBookingRequestSuccessTemplate(
+            String tenantName,
+            String ownerName,
+            String propertyTitle,
+            String contactNo
+    ) {
+        return """
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f1f5f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .header {
+            background: #6366f1;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .content {
+            padding: 30px;
+            color: #334155;
+            line-height: 1.6;
+        }
+        .status-box {
+            background: #eff6ff;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+            margin: 20px 0;
+        }
+        .info-box {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin-top: 15px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #3b82f6;
+            color: white;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 8px;
+        }
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #94a3b8;
+            padding: 25px;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+        }
+        strong {
+            color: #1e293b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">RentalHub</div>
+
+        <div class="content">
+            <h2 style="margin-top:0;">Hello,Dear %s,</h2>
+
+            <div class="status-box">
+                <strong>Booking Request Successful!</strong><br/>
+                Your booking request has been sent to the property owner.
+            </div>
+
+           <p>
+                Please wait for the owner to review your request and call back you.
+                And visit the property as physically or contact to property owner by the above mention contact details otherwise request will reject.
+            </p>
+            <div class="info-box">
+                <strong>Property:</strong> %s <br/>
+                <strong>Owner:</strong> %s <br/>
+                <strong>Contact:</strong> %s <br/>
+                <span class="badge">Request Sent</span>
+            </div>
+
+        </div>
+
+        <div class="footer">
+            © 2026 RentalHub • Kanchanpur, Nepal <br/>
+            Making renting simple & smart
+        </div>
+    </div>
+</body>
+</html>
+""".formatted(tenantName, propertyTitle, ownerName, contactNo);
+    }
 
     public static String buildApprovalTemplate(String ownerName, String propertyTitle) {
         return """
@@ -201,72 +312,7 @@ public class MailTemplate {
 </html>
 """.formatted(tenantName, propertyTitle, ownerName);
     }
-    public static String buildOtpEmailTemplate(String otp) {
 
-        if (otp == null || otp.length() != 6) {
-            throw new IllegalArgumentException("OTP must be exactly 6 digits");
-        }
-
-        return """
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <style>
-                    body {
-                        font-family: Arial, sans-serif;
-                        background-color: #f1f5f9;
-                        margin: 0;
-                        padding: 0;
-                        text-align: center;
-                    }
-                    .container {
-                        max-width: 500px;
-                        margin: 50px auto;
-                        background: #ffffff;
-                        padding: 30px;
-                        border-radius: 10px;
-                        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-                    }
-                    .otp-box {
-                        display: inline-block;
-                        width: 45px;
-                        height: 55px;
-                        line-height: 55px;
-                        margin: 5px;
-                        font-size: 24px;
-                        font-weight: bold;
-                        border: 2px solid #6366f1;
-                        border-radius: 8px;
-                        background: #f8fafc;
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <h2>Your Verification Code</h2>
-
-                    <div>
-                        <span class="otp-box">%s</span>
-                        <span class="otp-box">%s</span>
-                        <span class="otp-box">%s</span>
-                        <span class="otp-box">%s</span>
-                        <span class="otp-box">%s</span>
-                        <span class="otp-box">%s</span>
-                    </div>
-
-                </div>
-            </body>
-            </html>
-            """.formatted(
-                otp.charAt(0),
-                otp.charAt(1),
-                otp.charAt(2),
-                otp.charAt(3),
-                otp.charAt(4),
-                otp.charAt(5)
-        );
-    }
     public static String buildEmailVerifyTemplate(String token) {
 
         // Validate token (must be 6 digits)
