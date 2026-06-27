@@ -1,44 +1,48 @@
 package com.rental.houserental.entity;
+
 import jakarta.persistence.*;
 import lombok.Data;
-import java.time.LocalDateTime;
 
-@Data
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Entity
-@Table(name = "agreement")
+@Table(name = "agreements")
+@Data
 public class Agreement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long ownerId;
-    private String ownerName;
-    private String adminName;
+    private boolean ownerSign;
 
-    @Column(length= 1000)
-    private String list1;
-    @Column(length= 500)
-    private String list2;
-    @Column(length= 500)
-    private String list3;
-    @Column(length= 500)
-    private String list4;
-    @Column(length= 500)
-    private String list5;
-    @Column(length= 500)
-    private String list6;
-    @Column(length= 500)
-    private String list7;
-    @Column(length= 500)
-    private String list8;
-    @Column(length= 500)
-    private String list9;
-    @Column(length= 500)
-    private String list10;
-
-    private boolean isOwnerSign=false;
-    private boolean isAdminSign=false;
+    private boolean agreed;
 
     private LocalDateTime acceptedAt;
+
+    @OneToOne
+    @JoinColumn(name = "owner_id")
+    private Owner owner;
+
+    private String adminName;
+    private String adminEmail;
+
+
+
+    // FIXED: dynamic list (NO list1, list2...)
+    @ElementCollection
+    @CollectionTable(
+            name = "agreement_terms",
+            joinColumns = @JoinColumn(name = "agreement_id")
+    )
+    @Column(name = "term", length = 1000)
+    private List<String> terms;
+
+    @PrePersist
+    public void prePersist() {
+        if (acceptedAt == null) {
+            acceptedAt = LocalDateTime.now();
+        }
+    }
 }

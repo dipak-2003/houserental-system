@@ -14,6 +14,7 @@ import com.rental.houserental.service.NotificationProvider;
 import com.rental.houserental.service.PropertyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +25,8 @@ public class PropertyServiceImpl implements PropertyService {
     private final EmailService emailService;
     private final PropertyRepository propertyRepository;
     private final OwnerRepository ownerRepository;
+    @Value("${app.admin.email}")
+    private String adminEmail;
     @Autowired
     private AdminRepository adminRepository;
     @Autowired
@@ -44,7 +47,8 @@ public class PropertyServiceImpl implements PropertyService {
         notification.setMessage(notice.getMessage());
         notification.setTitle(notice.getTitle());
         notification.setRole(Role.ADMIN);
-        notification.setUserId(property.getOwner().getId());
+        Admin admin=adminRepository.findByEmail(adminEmail).get();
+        notification.setUserId(admin.getId());
         notificationService.create(notification);
         return property1;
     }
