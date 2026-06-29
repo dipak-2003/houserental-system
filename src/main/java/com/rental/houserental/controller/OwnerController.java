@@ -180,7 +180,7 @@ public class OwnerController {
     }
 
     // ================= UPDATE PROPERTY =================
-    @PutMapping(value = "/update/{propertyId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/update-property/{propertyId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateProperty(
             @RequestHeader("Authorization") String authHeader,
             @PathVariable Long propertyId,

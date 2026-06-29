@@ -227,5 +227,11 @@ public class PaymentController {
         return new ResponseEntity<>(payments,HttpStatus.OK);
     }
 
+    @DeleteMapping("/delete/{id}")
+    public String deletePayment(@PathVariable Long id){
+        paymentRepository.deleteById(id);
+        return "Statement delete successfully!";
+    }
+
 
 }
